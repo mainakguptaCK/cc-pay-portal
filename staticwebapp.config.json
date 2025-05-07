@@ -1,6 +1,27 @@
 {
-  "navigationFallback": {
-    "rewrite": "/index.html"
-  }
+  "auth": {
+    "identityProviders": {
+      "azureActiveDirectoryB2C": {
+        "registration": {
+          "clientId": "B2C_CLIENT_ID",
+          "clientSecretSettingName": "B2C_CLIENT_SECRET",
+          "openIdIssuer": "https://cloudkaptanadb2c.onmicrosoft.com.b2clogin.com/cloudkaptanadb2c.onmicrosoft.com.onmicrosoft.com/v2.0/"
+        }
+      }
+    }
+  },
+  "routes": [
+    {
+      "route": "/api/get-roles",
+      "allowedRoles": ["anonymous", "authenticated"]
+    },
+    {
+      "route": "/dashboard",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/",
+      "rewrite": "/index.html"
+    }
+  ]
 }
-
