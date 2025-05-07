@@ -39,6 +39,11 @@ const Login: React.FC = () => {
     setPassword('password');
   };
 
+  const handleLogin = () => {
+    console.log('in login page');
+    window.location.href = `${window.location.origin}/.auth/login/aadb2c`;
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-900 to-blue-700 px-4 py-12">
       <div className="max-w-md w-full bg-white rounded-xl shadow-xl overflow-hidden">
@@ -138,6 +143,14 @@ const Login: React.FC = () => {
                 Customer Demo
               </Button>
             </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleLogin}
+            >
+              Sign in with Azure AD B2C
+            </Button>
           </div>
         </div>
       </div>
