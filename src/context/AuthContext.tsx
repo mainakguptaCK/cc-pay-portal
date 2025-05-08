@@ -1,63 +1,67 @@
-import React, { createContext, useState, useContext } from 'react';
-import { User, UserRole } from '../types';
-import { users } from '../utils/mockData';
+import React, { useState, useEffect, useCallback } from 'react';
+import { AuthContext } from './AuthContextInstance';
+import { User } from '../types';
 
-interface AuthContextType {
-  currentUser: User | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<User>;
-  logout: () => void;
-  isAdmin: boolean;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const validRoles = ['borrower', 'investor'];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  
-  const login = async (email: string, password: string): Promise<User> => {
-    // In a real app, this would make an API call to authenticate
-    // For demo purposes, we'll use mock data
-    return new Promise((resolve, reject) => {
-      // Simulate API call
-      setTimeout(() => {
-        const user = users.find(u => u.email === email);
-        
-        if (user && !user.isLocked) {
-          setCurrentUser(user);
-          resolve(user);
-        } else {
-          reject(new Error('Invalid credentials or account locked'));
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await fetch('/.auth/me');
+        const data = await response.json();
+        const userAttributeRole = 'extension_user_role_type';
+
+        if (data.clientPrincipal) {
+          const roleClaim = data.clientPrincipal.claims?.find(
+            (claim: any) => claim.typ === userAttributeRole
+          );
+          const roleFromClaim = roleClaim?.val || 'borrower';
+          const role = checkRole(roleFromClaim);
+
+          const nameClaim = data.clientPrincipal.claims?.find(
+            (claim: any) => claim.typ === 'name' || claim.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
+          );
+          const name = nameClaim?.val || data.clientPrincipal.userDetails;
+
+          setUser({
+            id: data.clientPrincipal.userId,
+            name: name,
+            email: data.clientPrincipal.userDetails,
+            role: role as 'borrower' | 'investor' | 'admin',
+            profileComplete: true
+          });
         }
-      }, 500);
-    });
-  };
-  
-  const logout = () => {
-    setCurrentUser(null);
-  };
-  
-  const isAdmin = currentUser?.role === 'admin';
-  
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
+  function checkRole(role: string | undefined): 'borrower' | 'investor' {
+    return role && validRoles.includes(role) ? (role as 'borrower' | 'investor') : 'borrower';
+  }
+
+  const login = useCallback(async (email: string, password: string) => {
+    console.log('Login is handled by ADB2C');
+  }, []);
+
+  const logout = useCallback(() => {
+    window.location.href = '/.auth/logout';
+  }, []);
+
   return (
-    <AuthContext.Provider
-      value={{
-        currentUser,
-        isAuthenticated: !!currentUser,
-        login,
-        logout,
-        isAdmin
-      }}
-    >
+    <AuthContext.Provider value={{
+      user,
+      login,
+      logout,
+      isAuthenticated: !!user,
+    }}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 }

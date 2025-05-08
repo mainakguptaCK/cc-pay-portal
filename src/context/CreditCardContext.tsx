@@ -7,7 +7,7 @@ import {
   creditCards, transactions, statements, directDebits, rewards,
   referralLinks, portalNotices, fees, creditDecisions
 } from '../utils/mockData';
-import { useAuth } from './AuthContext';
+import { useAuth } from './useAuth';
 
 interface CreditCardContextType {
   // User's credit cards

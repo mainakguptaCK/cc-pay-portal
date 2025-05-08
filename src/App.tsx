@@ -17,6 +17,7 @@ import PortalNotices from './pages/admin/PortalNotices';
 import CreditDecisions from './pages/admin/CreditDecisions';
 import FeesManagement from './pages/admin/FeesManagement';
 import AuthGuard from './components/shared/AuthGuard';
+import RoleBasedRedirect from './context/RoleBasedRedirect';
 
 function App() {
   return (
@@ -28,7 +29,8 @@ function App() {
             <main className="flex-1">
               <Routes>
                 {/* Public Routes */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/" element={<RoleBasedRedirect />} />
+
                 <Route path="/login" element={<Login />} />
 
                 {/* Customer Routes */}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogOut, Menu, X, CreditCard, User as UserIcon, Bell } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import Button from '../ui/Button';
 
 const Header: React.FC = () => {
