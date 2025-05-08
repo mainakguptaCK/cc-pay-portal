@@ -33,6 +33,18 @@
     {
       "route": "/",
       "rewrite": "/index.html"
-    }
+    },
+    {
+      "route": "/login",
+      "redirect": "/.auth/login/aadb2c"
+    },
+    {
+      "route": "/logout",
+      "redirect": "/.auth/logout"
+    },
+    {
+      "route": "/profile",
+      "allowedRoles": ["authenticated"]
+    },
   ]
 }
