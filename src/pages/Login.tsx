@@ -13,7 +13,6 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  console.log('in Login.tsx');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +20,7 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const user = await login(email, password);
+      const user = await login(email, password);      
       navigate(user.role === 'admin' ? '/admin' : '/dashboard');
     } catch (err) {
       setError('Invalid credentials. Please try again.');
@@ -42,7 +41,6 @@ const Login: React.FC = () => {
   };
 
   const handleLogin = () => {
-    console.log('in login page');
     window.location.href = `${window.location.origin}/.auth/login/aadb2c`;
   };
 

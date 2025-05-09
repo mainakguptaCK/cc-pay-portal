@@ -7,16 +7,24 @@ interface AuthGuardProps {
 }
 
 const AuthGuard = ({ children, requireAdmin = false }: AuthGuardProps) => {
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, currentUser } = useAuth();
   const location = useLocation();
 
   if (!isAuthenticated) {
-    // Redirect to login if not authenticated
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (requireAdmin && !isAdmin) {
-    // Redirect to dashboard if not an admin
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // Redirect admin to admin dashboard if they try to access customer routes
+  if (isAdmin && !location.pathname.startsWith('/admin')) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  // Redirect customers to dashboard if they try to access admin routes
+  if (!isAdmin && location.pathname.startsWith('/admin')) {
     return <Navigate to="/dashboard" replace />;
   }
 
