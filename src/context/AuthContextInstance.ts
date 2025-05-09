@@ -2,10 +2,11 @@ import { createContext } from 'react';
 import { User } from '../types';
 
 export interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  currentUser : User | null;
+  login: (email: string, password: string) => Promise<User>;
   logout: () => void;
   isAuthenticated: boolean;
+  isAdmin: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

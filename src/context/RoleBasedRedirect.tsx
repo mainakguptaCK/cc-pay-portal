@@ -7,6 +7,7 @@ const RoleBasedRedirect = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  console.log('user data : ',user);
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login', { replace: true });

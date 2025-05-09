@@ -29,8 +29,8 @@ function App() {
             <main className="flex-1">
               <Routes>
                 {/* Public Routes */}
-                <Route path="/" element={<RoleBasedRedirect />} />
-
+                {/* <Route path="/" element={<RoleBasedRedirect />} /> */}
+                console.log('in App.tsx');
                 <Route path="/login" element={<Login />} />
 
                 {/* Customer Routes */}
