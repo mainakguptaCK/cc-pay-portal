@@ -9,7 +9,7 @@
               "clientSecretSettingName": "AADB2C_PROVIDER_CLIENT_SECRET"
             },
             "openIdConnectConfiguration": {
-              "wellKnownOpenIdConfiguration": "https://cloudkaptanadb2c.b2clogin.com/cloudkaptanadb2c.onmicrosoft.com/B2C_1_cc-pay-susi/v2.0/.well-known/openid-configuration"
+              "wellKnownOpenIdConfiguration": "https://ccpaycloudkaptanadb2c.b2clogin.com/ccpaycloudkaptanadb2c.onmicrosoft.com/B2C_1_cc-pay-susi/v2.0/.well-known/openid-configuration"
             }
           },
           "login": {
