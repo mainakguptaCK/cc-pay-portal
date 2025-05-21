@@ -56,7 +56,7 @@
     {
       "route": "/admin/*",
       "allowedIdentities": ["aad"],
-      "allowedRoles": ["authenticated"],
+      "allowedRoles": ["anonymous","authenticated"],
       "rewrite": "/index.html"
     },
     {
