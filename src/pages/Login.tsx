@@ -41,7 +41,7 @@ const Login: React.FC = () => {
   };
 
   const handleLogin = () => {
-    window.location.href = `${window.location.origin}/.auth/login/aad`;
+    window.location.href = `${window.location.origin}/.auth/login/aadb2c`;
   };
 
   return (
