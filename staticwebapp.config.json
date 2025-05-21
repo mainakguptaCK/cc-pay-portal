@@ -1,6 +1,13 @@
 {
   "auth": {
     "identityProviders": {
+      "azureActiveDirectory": {
+        "registration": {
+          "openIdIssuer": "https://login.microsoftonline.com/YOUR_TENANT_ID/v2.0",
+          "clientIdSettingName": "AZURE_CLIENT_ID",
+          "clientSecretSettingName": "AZURE_CLIENT_SECRET"
+        }
+      },
       "customOpenIdConnectProviders": {
         "aadb2c": {
           "registration": {
