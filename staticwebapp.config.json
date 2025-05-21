@@ -46,5 +46,15 @@
       "route": "/profile",
       "allowedRoles": ["authenticated"]
     },
+    {
+      "route": "/admin/*",
+      "allowedIdentities": ["aad"],
+      "allowedRoles": ["authenticated"],
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/login-admin",
+      "redirect": "/.auth/login/aad"
+    }
   ]
 }
