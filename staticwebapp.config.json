@@ -55,7 +55,7 @@
     },
     {
       "route": "/admin/*",
-      "allowedRoles": ["admin"],
+      "allowedRoles": ["admin","group-b78b67ef-3c59-420f-a6c4-056f56e0c4c6"],
       "rewrite": "/index.html"
     },
     {
