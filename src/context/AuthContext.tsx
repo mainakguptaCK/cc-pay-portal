@@ -21,6 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (authData.clientPrincipal) {
             const { userDetails, userRoles } = authData.clientPrincipal;
 
+            console.log('response : ',response);
             console.log('authData : ',authData);
             console.log('userRoles : ',userRoles);
             
