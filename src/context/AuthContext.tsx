@@ -20,6 +20,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (authData.clientPrincipal) {
             const { userDetails, userRoles } = authData.clientPrincipal;
+
+            console.log('userRoles : ',userRoles);
             
             // Create user object from ADB2C data
             const user: User = {
