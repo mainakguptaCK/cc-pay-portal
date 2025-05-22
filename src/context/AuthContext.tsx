@@ -24,6 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.log('response : ',response);
             console.log('authData : ',authData);
             console.log('userRoles : ',userRoles);
+            console.log('userDetails : ',userDetails);
             
             // Create user object from ADB2C data
             const user: User = {
