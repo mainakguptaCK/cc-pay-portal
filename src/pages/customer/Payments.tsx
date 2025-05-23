@@ -44,6 +44,41 @@ const Payments: React.FC = () => {
     fetchCardDetails();
   }, []);
 
+  const handlePayment = async () => {
+    if (!selectedCardData || !paymentAmount || !paymentDate) {
+      alert("Please fill in all payment details.");
+      return;
+    }
+  
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/card/makePayment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          UserID: userId,
+          CardNumber: selectedCardData.CardNumber,
+          PaymentAmount: parseFloat(paymentAmount),
+          PaymentDate: paymentDate,
+          PaymentMethod: 'UPI Payment', // or make this dynamic later
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(result.error || "Payment failed.");
+      }
+  
+      alert("Payment successful!");
+      // Optionally refresh card data or clear the form
+    } catch (err) {
+      console.error("Payment error:", err);
+      alert("Payment failed. Please try again.");
+    }
+  };
+
   const selectedCardData = userCards.find(card => card.CardID === selectedCard);
 
   const formatCurrency = (amount: number) => {
@@ -179,6 +214,7 @@ const Payments: React.FC = () => {
                   fullWidth
                   size="lg"
                   leftIcon={<DollarSign size={18} />}
+                  onClick={handlePayment}
                 >
                   Make Payment
                 </Button>
