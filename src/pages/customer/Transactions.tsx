@@ -4,6 +4,7 @@ import Card, { CardBody, CardHeader } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { Transaction, CardType as CardTier } from '../../types'; // Adjust path as needed
+import { useAuth } from '../../context/useAuth';
 
 interface Card {
   id: string;
@@ -12,12 +13,13 @@ interface Card {
 }
 
 const Transactions: React.FC = () => {
-  const userId = '4'; // Replace with real user ID from auth/session
   const [userCards, setUserCards] = useState<Card[]>([]);
   const [userTransactions, setUserTransactions] = useState<Transaction[]>([]);
   const [selectedCard, setSelectedCard] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
+  const { currentUser } = useAuth();
+  const userId = currentUser?.id;
 
   useEffect(() => {
     const fetchData = async () => {

@@ -8,6 +8,8 @@ import { CreditCard as CreditCardIcon, ChevronDown, ChevronUp } from 'lucide-rea
 import Card, { CardBody } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { useCreditCard } from '../../context/CreditCardContext';
+import { useAuth } from '../../context/useAuth';
+
 
 const CustomerDashboard: React.FC = () => {
   const [userCards, setUserCards] = useState<any[]>([]);
@@ -19,13 +21,14 @@ const CustomerDashboard: React.FC = () => {
   const [dismissedNotices, setDismissedNotices] = useState<string[]>([]);
   const [selectedCard, setSelectedCard] = useState<string | 'overall'>('overall');
   const [expandedCards, setExpandedCards] = useState<string[]>([]);
-
-  const userId = 4; // Replace with dynamic user ID if applicable
+  const { currentUser } = useAuth();
 
   // Fetch user's credit cards
   useEffect(() => {
     const fetchUserCards = async () => {
       try {
+        console.log(currentUser);
+        const userId = currentUser?.id;
         const response = await fetch('http://127.0.0.1:5000/api/card/getCardDetails', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -62,6 +65,8 @@ const CustomerDashboard: React.FC = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
+        console.log(currentUser);
+        const userId = currentUser?.id; 
         const response = await fetch('http://127.0.0.1:5000/api/transaction/getTransactionsByUser', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

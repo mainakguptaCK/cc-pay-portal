@@ -3,6 +3,7 @@ import { CreditCard, Calendar, DollarSign, CheckCircle } from 'lucide-react';
 import Card, { CardBody, CardHeader } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+import { useAuth } from '../../context/useAuth';
 
 const Payments: React.FC = () => {
   const [userCards, setUserCards] = useState<any[]>([]);
@@ -10,6 +11,8 @@ const Payments: React.FC = () => {
   const [selectedCard, setSelectedCard] = useState('');
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentDate, setPaymentDate] = useState('');
+  const { currentUser } = useAuth();
+  const userId = currentUser?.id;
 
   useEffect(() => {
     const fetchCardDetails = async () => {
@@ -19,7 +22,7 @@ const Payments: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ UserID: 4 }),
+          body: JSON.stringify({ UserID: userId }),
         });
 
         const data = await response.json();
