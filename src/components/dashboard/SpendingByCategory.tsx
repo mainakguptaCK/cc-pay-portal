@@ -4,7 +4,7 @@ import Card, { CardBody, CardHeader } from '../ui/Card';
 import { Transaction } from '../../types';
 
 interface SpendingByCategoryProps {
-  transactions: Transaction[];
+  transactions?: Transaction[]; // make optional
 }
 
 interface CategoryTotal {
@@ -13,10 +13,10 @@ interface CategoryTotal {
   color: string;
 }
 
-const SpendingByCategory: React.FC<SpendingByCategoryProps> = ({ transactions }) => {
+const SpendingByCategory: React.FC<SpendingByCategoryProps> = ({ transactions = [] }) => {
   // Filter out credit transactions
   const expenses = transactions.filter(tx => !tx.isCredit);
-  
+
   // Calculate totals by category
   const categoryTotals = expenses.reduce<Record<string, number>>((acc, tx) => {
     if (!acc[tx.category]) {
@@ -25,7 +25,7 @@ const SpendingByCategory: React.FC<SpendingByCategoryProps> = ({ transactions })
     acc[tx.category] += tx.amount;
     return acc;
   }, {});
-  
+
   // Format categories with colors
   const categoryColors: Record<string, string> = {
     'Shopping': '#4C51BF', // indigo-600
@@ -38,7 +38,7 @@ const SpendingByCategory: React.FC<SpendingByCategoryProps> = ({ transactions })
     'Education': '#48BB78', // green-500
     'Other': '#718096', // gray-600
   };
-  
+
   // Create formatted category totals array
   const formattedCategoryTotals: CategoryTotal[] = Object.entries(categoryTotals)
     .map(([category, total]) => ({
@@ -47,10 +47,10 @@ const SpendingByCategory: React.FC<SpendingByCategoryProps> = ({ transactions })
       color: categoryColors[category] || '#718096',
     }))
     .sort((a, b) => b.total - a.total);
-  
+
   // Calculate total spending
   const totalSpending = formattedCategoryTotals.reduce((sum, cat) => sum + cat.total, 0);
-  
+
   // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -58,7 +58,7 @@ const SpendingByCategory: React.FC<SpendingByCategoryProps> = ({ transactions })
       currency: 'USD',
     }).format(amount);
   };
-  
+
   return (
     <Card className="h-full">
       <CardHeader className="flex justify-between items-center">
@@ -88,9 +88,11 @@ const SpendingByCategory: React.FC<SpendingByCategoryProps> = ({ transactions })
                   />
                 ))}
               </div>
-              <p className="text-sm text-gray-600 mb-2">Total Spending: {formatCurrency(totalSpending)}</p>
+              <p className="text-sm text-gray-600 mb-2">
+                Total Spending: {formatCurrency(totalSpending)}
+              </p>
             </div>
-            
+
             <div className="space-y-3">
               {formattedCategoryTotals.map((cat, index) => (
                 <div key={index} className="flex items-center justify-between">

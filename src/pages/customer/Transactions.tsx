@@ -1,49 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, Download, Calendar, CreditCard, Award } from 'lucide-react';
 import Card, { CardBody, CardHeader } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
-import { useCreditCard } from '../../context/CreditCardContext';
+import { Transaction, CardType as CardTier } from '../../types'; // Adjust path as needed
+
+interface Card {
+  id: string;
+  cardNumber: string;
+  cardType: CardTier;
+}
 
 const Transactions: React.FC = () => {
-  const { userCards, userTransactions } = useCreditCard();
+  const userId = '4'; // Replace with real user ID from auth/session
+  const [userCards, setUserCards] = useState<Card[]>([]);
+  const [userTransactions, setUserTransactions] = useState<Transaction[]>([]);
   const [selectedCard, setSelectedCard] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
-  
-  const filteredTransactions = userTransactions
-    .filter(tx => 
-      (selectedCard === 'all' || tx.cardId === selectedCard) &&
-      (searchTerm === '' || 
-        tx.merchantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tx.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tx.transactionId.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    )
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-  
-  const formatCardNumber = (cardNumber: string) => {
-    return cardNumber.replace(/(\*{4})-(\*{4})-(\*{4})-(\d{4})/, '$1 $2 $3 $4');
-  };
 
-  const getCardTypeColor = (cardType: string) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [cardsRes, txRes] = await Promise.all([
+          fetch('http://127.0.0.1:5000/api/card/getCardDetails', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ UserID: userId }),
+          }),
+          fetch('http://127.0.0.1:5000/api/transaction/getTransactionsByUser', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ UserID: userId }),
+          }),
+        ]);
+
+        const cardsData = await cardsRes.json();
+        const transactionsData = await txRes.json();
+
+        const normalizedCards = cardsData.cards.map((card: any) => ({
+          id: card.CardID.toString(),
+          cardNumber: card.CardNumber,
+          isBlocked: card.CardStatus !== 'Active',
+          cardType: card.CardType,
+          cardholderName: card.CardholderName,
+          createdDate: new Date(card.CreatedDate),
+          expiryDate: new Date(card.ExpirationDate).toLocaleDateString(),
+          lastModifiedDate: new Date(card.LastModifiedDate),
+          creditLimit: card.CreditLimit,
+          availableLimit: card.CreditLimit - card.OutStandingBalance,
+          totalOutstanding: card.OutStandingBalance,
+          dueDate: new Date(card.PaymentDueDate).toLocaleDateString(),
+        }));
+
+        setUserCards(normalizedCards);
+        setUserTransactions(transactionsData.Transactions);
+        //console.log(transactionsData);
+        
+      } catch (error) {
+        console.error('Error fetching card or transaction data:', error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+    const filteredTransactions = Array.isArray(userTransactions)
+      ? userTransactions
+          .filter(tx =>
+            (selectedCard === 'all' || tx.cardId === selectedCard) &&
+            (searchTerm === '' ||
+              tx.merchantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              tx.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              tx.transactionId.toLowerCase().includes(searchTerm.toLowerCase())) &&
+            (!dateRange.start || new Date(tx.date) >= new Date(dateRange.start)) &&
+            (!dateRange.end || new Date(tx.date) <= new Date(dateRange.end)))
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      : [];
+      console.log(userTransactions);
+      
+
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+
+  const formatCardNumber = (cardNumber: string) =>
+    cardNumber.replace(/(\*{4})-(\*{4})-(\*{4})-(\d{4})/, '$1 $2 $3 $4');
+
+  const getCardTypeColor = (cardType: CardTier) => {
     const colors = {
       platinum: 'bg-gray-800 text-white',
       gold: 'bg-yellow-600 text-white',
       titanium: 'bg-blue-700 text-white',
       business: 'bg-green-700 text-white',
-      rewards: 'bg-purple-700 text-white'
+      rewards: 'bg-purple-700 text-white',
     };
-    return colors[cardType as keyof typeof colors] || 'bg-gray-600 text-white';
+    return colors[cardType] || 'bg-gray-600 text-white';
   };
-  
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-8">
@@ -148,7 +201,11 @@ const Transactions: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredTransactions.map(transaction => {
+                
+                {
+                  
+                filteredTransactions.map(transaction => {
+                  console.log('Rendering transaction:', transaction);
                   const card = userCards.find(c => c.id === transaction.cardId);
                   return (
                     <tr key={transaction.id} className="hover:bg-gray-50">
