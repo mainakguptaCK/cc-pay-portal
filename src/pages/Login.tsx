@@ -44,6 +44,10 @@ const Login: React.FC = () => {
     window.location.href = `${window.location.origin}/.auth/login/aadb2c`;
   };
 
+  const handleAdminLogin = () => {
+    window.location.href = `${window.location.origin}/.auth/login/aad`;
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-900 to-blue-700 px-4 py-12">
       <div className="max-w-md w-full bg-white rounded-xl shadow-xl overflow-hidden">
@@ -115,6 +119,28 @@ const Login: React.FC = () => {
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleLogin}
+                  fullWidth
+                  disabled={loading}
+              >
+                Sign in with SSO
+              </Button>
+
+              <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleAdminLogin}
+                  fullWidth
+                  disabled={loading}
+              >
+                Admin Login
+              </Button>
+            </div>
           </form>
 
           <div className="mt-8">
@@ -141,16 +167,8 @@ const Login: React.FC = () => {
                 onClick={loginAsCustomer}
               >
                 Customer Demo
-              </Button>
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleLogin}
-            >
-              Sign in with Azure AD B2C
-            </Button>
+              </Button>              
+            </div>            
           </div>
         </div>
       </div>
