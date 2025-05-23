@@ -8,6 +8,12 @@ interface Claim {
   val: string;
 }
 
+//Common role claim types
+const ROLE_CLAIM_TYPES = [
+  'roles', // The modern, short claim type
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/role' // The older, full URI claim type
+];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,15 +37,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.log('userRoles : ',userRoles);
             console.log('userDetails : ',userDetails);
 
-            // --- Extract roles from claims array ---
-            // Filter for claims where typ is "roles"
-            const roleClaims = claims.filter((claim: Claim) => claim.typ === 'roles');
+            // --- Extract roles from claims array, checking for both claim types ---
+            const extractedRoles: string[] = [];
 
-            // Extract the 'val' from each role claim
-            const extractedRoles = roleClaims.map((claim: Claim) => claim.val);
+            // Iterate over all claims
+            claims.forEach((claim: Claim) => {
+              // Check if the current claim's type is one of our expected role claim types
+              if (ROLE_CLAIM_TYPES.includes(claim.typ)) {
+                // If it's a role claim, add its value to our list of extracted roles
+                extractedRoles.push(claim.val);
+              }
+            });
+
+
+            // Ensure unique roles if there's any chance of duplicates (e.g., if a user has multiple roles)
+            const uniqueExtractedRoles = Array.from(new Set(extractedRoles));
 
             // Check if 'admin' role exists in the extracted roles
-            const hasAdminRole = extractedRoles.includes('admin');
+            const hasAdminRole = uniqueExtractedRoles.includes('admin');
             // --- End of role extraction ---
             
             // Create user object from ADB2C data
