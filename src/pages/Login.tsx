@@ -67,7 +67,7 @@ const Login: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <Input
+            {/* <Input
               label="Email Address"
               type="email"
               id="email"
@@ -77,9 +77,9 @@ const Login: React.FC = () => {
               required
               fullWidth
               leftIcon={<Mail size={18} className="text-gray-400" />}
-            />
+            /> */}
 
-            <Input
+            {/* <Input
               label="Password"
               type="password"
               id="password"
@@ -89,9 +89,9 @@ const Login: React.FC = () => {
               required
               fullWidth
               leftIcon={<Lock size={18} className="text-gray-400" />}
-            />
+            /> */}
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
                   id="remember-me"
@@ -118,7 +118,7 @@ const Login: React.FC = () => {
               disabled={loading}
             >
               {loading ? 'Signing in...' : 'Sign in'}
-            </Button>
+            </Button> */}
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <Button
