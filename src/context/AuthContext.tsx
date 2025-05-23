@@ -3,6 +3,11 @@ import { AuthContext } from './AuthContextInstance';
 import { User } from '../types';
 import { users } from '../utils/mockData';
 
+interface Claim {
+  typ: string;
+  val: string;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -19,19 +24,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const authData = await response.json();
           
           if (authData.clientPrincipal) {
-            const { userDetails, userRoles } = authData.clientPrincipal;
+            const { userDetails, userRoles, claims } = authData.clientPrincipal;
 
             console.log('response : ',response);
             console.log('authData : ',authData);
             console.log('userRoles : ',userRoles);
             console.log('userDetails : ',userDetails);
+
+            // --- Extract roles from claims array ---
+            // Filter for claims where typ is "roles"
+            const roleClaims = claims.filter((claim: Claim) => claim.typ === 'roles');
+
+            // Extract the 'val' from each role claim
+            const extractedRoles = roleClaims.map((claim: Claim) => claim.val);
+
+            // Check if 'admin' role exists in the extracted roles
+            const hasAdminRole = extractedRoles.includes('admin');
+            // --- End of role extraction ---
             
             // Create user object from ADB2C data
             const user: User = {
               id: authData.clientPrincipal.userId,
               name: userDetails,
               email: userDetails,
-              role: userRoles.includes('admin') ? 'admin' : 'customer',
+              role: hasAdminRole ? 'admin' : 'customer',
               isLocked: false
             };
             
