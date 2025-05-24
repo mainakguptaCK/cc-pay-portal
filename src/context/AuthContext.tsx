@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               role: hasAdminRole ? 'admin' : 'customer',
               isLocked: false
             };
-            
+            console.log(authData.clientPrincipal.userId)
             setCurrentUser(user);
           }
         } else {
