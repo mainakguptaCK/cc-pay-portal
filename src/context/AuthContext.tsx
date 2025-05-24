@@ -67,6 +67,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             };
             console.log(authData.clientPrincipal.userId)
             setCurrentUser(user);
+
+            // 🔔 Register Account in the backend
+            await fetch('http://127.0.0.1:5000/api/admin/createAccount', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                UserID: authData.clientPrincipal.userId,
+                AccountType: "Active",
+                CurrentBalance: 0.00,
+                AvailableCredit: 0.00,
+              }),
+            });
+            console.log("Account is created");
           }
         } else {
           // If we're not getting JSON, we're probably in local development
