@@ -17,7 +17,7 @@ const Payments: React.FC = () => {
   useEffect(() => {
     const fetchCardDetails = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/card/getCardDetails', {
+        const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/getCardDetails', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ const Payments: React.FC = () => {
     }
   
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/card/makePayment', {
+      const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/makePayment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -25,12 +25,12 @@ const Transactions: React.FC = () => {
     const fetchData = async () => {
       try {
         const [cardsRes, txRes] = await Promise.all([
-          fetch('http://127.0.0.1:5000/api/card/getCardDetails', {
+          fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/getCardDetails', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ UserID: userId }),
           }),
-          fetch('http://127.0.0.1:5000/api/transaction/getTransactionsByUser', {
+          fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/transaction/getTransactionsByUser', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ UserID: userId }),
