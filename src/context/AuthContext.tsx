@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setCurrentUser(user);
 
             // 🔔 Register Account in the backend
-            await fetch('http://127.0.0.1:5000/api/admin/createAccount', {
+            await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/admin/createAccount', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
