@@ -1,21 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lock, Unlock, Edit, User, CreditCard as CreditCardIcon, Mail, AlertCircle } from 'lucide-react';
 import Card, { CardBody, CardHeader } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
-import { users } from '../../utils/mockData';
 import { useCreditCard } from '../../context/CreditCardContext';
 import { User as UserType } from '../../types';
 
 const UserManagement: React.FC = () => {
   const { allCards, lockUserAccount, updateUserCreditLimit } = useCreditCard();
+  const [allUsers, setAllUsers] = useState<UserType[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [creditLimits, setCreditLimits] = useState<Record<string, string>>({});
-  
+  const [loading, setLoading] = useState(true);
+
+  // Fetch users from backend
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/user/findAllUsers');
+        const data = await response.json();
+
+        // Map API response to your internal UserType
+        const mappedUsers: UserType[] = data.users.map((user: any) => ({
+          id: user.UserID.toString(),
+          name: `${user.FirstName} ${user.LastName}`,
+          email: user.Email,
+          isLocked: user.AccountStatus !== 'Active',
+          role: 'customer', // Assuming all fetched users are customers
+        }));
+
+        setAllUsers(mappedUsers);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
   // Filter users
-  const filteredUsers = users.filter(user => 
-    user.role === 'customer' && 
+  const filteredUsers = allUsers.filter(user => 
     (searchQuery === '' || 
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -25,7 +52,7 @@ const UserManagement: React.FC = () => {
   const getUserCards = (userId: string) => {
     return allCards.filter(card => card.userId === userId);
   };
-  
+
   // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -33,12 +60,12 @@ const UserManagement: React.FC = () => {
       currency: 'USD',
     }).format(amount);
   };
-  
+
   // Handle credit limit update
   const handleCreditLimitUpdate = (cardId: string) => {
     const newLimit = creditLimits[cardId];
     if (!newLimit) return;
-    
+
     updateUserCreditLimit(selectedUser!.id, Number(newLimit));
     setCreditLimits(prev => ({ ...prev, [cardId]: '' }));
   };
@@ -53,11 +80,11 @@ const UserManagement: React.FC = () => {
     };
     return colors[cardType as keyof typeof colors] || 'bg-gray-600 text-white';
   };
-  
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">User Management</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* User List */}
         <div>
@@ -76,42 +103,45 @@ const UserManagement: React.FC = () => {
               />
             </div>
             <CardBody className="p-0">
-              <ul className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
-                {filteredUsers.map(user => (
-                  <li 
-                    key={user.id} 
-                    className={`px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors ${
-                      selectedUser?.id === user.id ? 'bg-blue-50 border-l-4 border-blue-700' : ''
-                    }`}
-                    onClick={() => setSelectedUser(user)}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="bg-gray-100 p-2 rounded-full">
-                        <User size={18} className="text-gray-600" />
+              {loading ? (
+                <div className="text-center py-6 text-gray-500">Loading users...</div>
+              ) : (
+                <ul className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
+                  {filteredUsers.map(user => (
+                    <li 
+                      key={user.id} 
+                      className={`px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors ${
+                        selectedUser?.id === user.id ? 'bg-blue-50 border-l-4 border-blue-700' : ''
+                      }`}
+                      onClick={() => setSelectedUser(user)}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="bg-gray-100 p-2 rounded-full">
+                          <User size={18} className="text-gray-600" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{user.name}</p>
+                          <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                        {user.isLocked && (
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            Locked
+                          </span>
+                        )}
                       </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
-                      </div>
-                      {user.isLocked && (
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          Locked
-                        </span>
-                      )}
-                    </div>
-                  </li>
-                ))}
-                
-                {filteredUsers.length === 0 && (
-                  <li className="px-6 py-8 text-center text-gray-500">
-                    No users found matching your search.
-                  </li>
-                )}
-              </ul>
+                    </li>
+                  ))}
+                  {filteredUsers.length === 0 && (
+                    <li className="px-6 py-8 text-center text-gray-500">
+                      No users found matching your search.
+                    </li>
+                  )}
+                </ul>
+              )}
             </CardBody>
           </Card>
         </div>
-        
+
         {/* User Details */}
         <div className="lg:col-span-2">
           {selectedUser ? (
