@@ -80,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             const uniqueExtractedRoles = Array.from(new Set(extractedRoles));
             const userEmail = extractedEmails[0];
+            console.log('userEmail : ',userEmail);
             const hasAdminRole = uniqueExtractedRoles.includes('admin');
 
             // Fetch additional user details from Graph API
