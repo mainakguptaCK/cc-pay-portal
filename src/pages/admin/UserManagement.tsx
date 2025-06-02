@@ -23,8 +23,8 @@ const UserManagement: React.FC = () => {
 
         // Map API response to your internal UserType
         const mappedUsers: UserType[] = data.users.map((user: any) => ({
-          id: user.UserID.toString(),
-          name: `${user.FirstName} ${user.LastName}`,
+          id: user.id.toString(),
+          name: user.displayName,
           email: user.Email,
           isLocked: user.AccountStatus !== 'Active',
           role: 'customer', // Assuming all fetched users are customers
