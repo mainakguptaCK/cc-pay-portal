@@ -21,7 +21,7 @@
           },
           "login": {
             "nameClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
-            "scopes": ["openid", "profile", "email", "User.Read"],
+            "scopes": ["openid", "profile", "email", "https://b2ctenant.onmicrosoft.com/AADB2C_PROVIDER_CLIENT_ID/User.Read"],
             "loginParameterNames": []
           }
         }
