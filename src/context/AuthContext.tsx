@@ -14,6 +14,10 @@ const ROLE_CLAIM_TYPES = [
   'roles',
   'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
 ];
+const EMAIL_CLAIM_TYPES = [
+  'emails',
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/email'
+];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -64,13 +68,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             // Extract roles from claims array
             const extractedRoles: string[] = [];
+            const extractedEmails: string[] = [];
             claims.forEach((claim: Claim) => {
               if (ROLE_CLAIM_TYPES.includes(claim.typ)) {
                 extractedRoles.push(claim.val);
               }
+              if (EMAIL_CLAIM_TYPES.includes(claim.typ)) {
+                extractedEmails.push(claim.val);
+              }
             });
 
             const uniqueExtractedRoles = Array.from(new Set(extractedRoles));
+            const userEmail = extractedEmails[0];
             const hasAdminRole = uniqueExtractedRoles.includes('admin');
 
             // Fetch additional user details from Graph API
@@ -81,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const user: User = {
               id: userId,
               name: graphUserDetails?.name || userDetails,
-              email: graphUserDetails?.email || userDetails,
+              email: userEmail || userDetails,
               role: hasAdminRole ? 'admin' : 'customer',
               isLocked: graphUserDetails ? !graphUserDetails.isEnabled : false
             };
