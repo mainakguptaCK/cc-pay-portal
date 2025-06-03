@@ -1,13 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreditCard as CreditCardIcon, Shield, AlertCircle, Settings, Lock, Unlock } from 'lucide-react';
 import Card, { CardHeader, CardBody, CardFooter } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Switch from '../../components/ui/Switch';
-import { useCreditCard } from '../../context/CreditCardContext';
+// import { useCreditCard } from '../../context/CreditCardContext';
+import { CardType as CardTier, CreditCard as CardList} from '../../types'; // Adjust path as needed
+import { useAuth } from '../../context/useAuth';
+// const Card = CreditCard;
 
 const CardManagement: React.FC = () => {
-  const { userCards, updateCardSettings, blockCard } = useCreditCard();
+  const [userCards, setUserCards] = useState<CardList[]>([]);
+  // const { userCards, updateCardSettings, blockCard } = useState<Card[]>([]);
   const [activeCardId, setActiveCardId] = useState<string>(userCards.length > 0 ? userCards[0].id : '');
+  const { currentUser } = useAuth();
+  const userId = currentUser?.id;
+
+
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const [cardsRes] = await Promise.all([
+            fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/getCardDetails', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ UserID: userId }),
+            })
+          ]);
+  
+          const cardsData = await cardsRes.json();
+          // const transactionsData = await txRes.json();
+  
+          const normalizedCards = cardsData.cards.map((card: any) => ({
+            id: card.CardID.toString(),
+            cardNumber: card.CardNumber,
+            isBlocked: card.CardStatus !== 'Active',
+            cardType: card.CardType,
+            cardholderName: card.CardholderName,
+            createdDate: new Date(card.CreatedDate),
+            expiryDate: new Date(card.ExpirationDate).toLocaleDateString(),
+            lastModifiedDate: new Date(card.LastModifiedDate),
+            creditLimit: card.CreditLimit,
+            availableLimit: card.CreditLimit - card.OutStandingBalance,
+            totalOutstanding: card.OutStandingBalance,
+            dueDate: new Date(card.PaymentDueDate).toLocaleDateString(),
+          }));
+  
+          setUserCards(normalizedCards);
+          // setUserTransactions(transactionsData.Transactions);
+          //console.log(transactionsData);
+          
+        } catch (error) {
+          console.error('Error fetching card or transaction data:', error);
+        }
+      };
+  
+      fetchData();
+    }, [userId]);
   
   const activeCard = userCards.find(card => card.id === activeCardId);
   
@@ -28,11 +76,13 @@ const CardManagement: React.FC = () => {
   }
   
   const toggleSetting = (setting: keyof typeof activeCard.settings, value: boolean) => {
-    updateCardSettings(activeCardId, { [setting]: value });
+    // updateCardSettings(activeCardId, { [setting]: value }); 
+    // Add Toggle settings API here
   };
   
   const handleBlockCard = () => {
-    blockCard(activeCardId, !activeCard.isBlocked);
+    // blockCard(activeCardId, !activeCard.isBlocked);
+    // Add block card Api here
   };
   
   const formatCardNumber = (cardNumber: string) => {
