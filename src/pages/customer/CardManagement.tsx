@@ -28,6 +28,7 @@ const CardManagement: React.FC = () => {
           ]);
   
           const cardsData = await cardsRes.json();
+          console.log('cardsData : ',cardsData);
           // const transactionsData = await txRes.json();
   
           const normalizedCards = cardsData.cards.map((card: any) => ({
@@ -58,6 +59,7 @@ const CardManagement: React.FC = () => {
     }, [userId]);
   
   const activeCard = userCards.find(card => card.id === activeCardId);
+  console.log('activeCard : ',activeCard);
   
   if (userCards.length === 0) {
     return (
