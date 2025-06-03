@@ -290,9 +290,40 @@ const UserManagement: React.FC = () => {
                           <Lock size={16} />
                         )
                       }
-                      onClick={() =>
-                        lockUserAccount(selectedUser.id, !selectedUser.isLocked)
-                      }
+                      onClick={async () => {
+                        if (!selectedUser) return;
+                        const newStatus = !selectedUser.isLocked;
+                        try {
+                          const response = await fetch(
+                            "https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/admin/updateUserAccountStatus",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                userID: selectedUser.id,
+                                accountEnabled: !newStatus, // accountEnabled should be false if locking
+                              }),
+                            }
+                          );
+                      
+                          if (response.ok) {
+                            setSelectedUser((prev) =>
+                              prev ? { ...prev, isLocked: newStatus } : prev
+                            );
+                            setAllUsers((prevUsers) =>
+                              prevUsers.map((user) =>
+                                user.id === selectedUser.id
+                                  ? { ...user, isLocked: newStatus }
+                                  : user
+                              )
+                            );
+                          } else {
+                            console.error("Failed to update user status");
+                          }
+                        } catch (err) {
+                          console.error("Error updating user account status:", err);
+                        }
+                      }}                      
                     >
                       {selectedUser.isLocked
                         ? "Unlock Account"
