@@ -213,7 +213,7 @@ const CardManagement: React.FC = () => {
           </div>
           
           {/* Security Settings */}
-          <Card className="mb-6">
+          {/* <Card className="mb-6">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">Security Settings</h2>
               <div className="p-2 rounded-full bg-blue-50">
@@ -265,10 +265,10 @@ const CardManagement: React.FC = () => {
                 />
               </div>
             </CardBody>
-          </Card>
+          </Card> */}
           
           {/* Contactless Payment Settings */}
-          <Card>
+          {/* <Card>
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">Contactless Settings</h2>
               <div className="p-2 rounded-full bg-blue-50">
@@ -303,7 +303,7 @@ const CardManagement: React.FC = () => {
                 <p>Contact customer support for more security options or to report suspicious activity.</p>
               </div>
             </CardFooter>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </div>
