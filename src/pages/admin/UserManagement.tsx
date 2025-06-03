@@ -107,7 +107,7 @@ const UserManagement: React.FC = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            AccountID: Number(selectedUser.id),
+            UserID: selectedUser.id,
             CardNumber: newCardDetails.cardNumber,
             CardType: newCardDetails.cardType,
             CardStatus: "Active",
