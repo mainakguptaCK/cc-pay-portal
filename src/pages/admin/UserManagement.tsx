@@ -23,6 +23,7 @@ const UserManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userCards, setUserCards] = useState<CreditCard[]>([]);
   const [showCardForm, setShowCardForm] = useState(false);
+  const [newEmail, setNewEmail] = useState(selectedUser?.email || "");
   const [newCardDetails, setNewCardDetails] = useState({
     cardNumber: "",
     cardType: "",
@@ -157,6 +158,35 @@ const UserManagement: React.FC = () => {
       }
     } catch (error) {
       console.error("Error issuing card:", error);
+    }
+  };
+
+  const handleUpdateEmail = async () => {
+    if (!selectedUser || !newEmail) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:5000/api/admin/updateUserEmail", // 🔁 Update URL if needed
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userID: selectedUser.id,
+            email: newEmail,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Email updated successfully");
+      } else {
+        console.error("Failed to update email");
+      }
+    } catch (err) {
+      console.error("Error updating email:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -305,7 +335,7 @@ const UserManagement: React.FC = () => {
                               }),
                             }
                           );
-                      
+
                           if (response.ok) {
                             setSelectedUser((prev) =>
                               prev ? { ...prev, isLocked: newStatus } : prev
@@ -321,9 +351,12 @@ const UserManagement: React.FC = () => {
                             console.error("Failed to update user status");
                           }
                         } catch (err) {
-                          console.error("Error updating user account status:", err);
+                          console.error(
+                            "Error updating user account status:",
+                            err
+                          );
                         }
-                      }}                      
+                      }}
                     >
                       {selectedUser.isLocked
                         ? "Unlock Account"
@@ -370,26 +403,21 @@ const UserManagement: React.FC = () => {
                         Actions
                       </h3>
                       <div className="space-y-3">
+                        <input
+                          type="email"
+                          className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                          placeholder="Enter new email address"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                        />
                         <Button
                           variant="outline"
                           fullWidth
                           leftIcon={<Mail size={16} />}
+                          onClick={handleUpdateEmail}
+                          disabled={loading}
                         >
-                          Update Email Address
-                        </Button>
-                        <Button
-                          variant="outline"
-                          fullWidth
-                          leftIcon={<AlertCircle size={16} />}
-                        >
-                          Send Verification Code
-                        </Button>
-                        <Button
-                          variant="outline"
-                          fullWidth
-                          leftIcon={<CreditCardIcon size={16} />}
-                        >
-                          Issue Replacement Card
+                          {loading ? "Updating..." : "Update Email Address"}
                         </Button>
                       </div>
                     </div>
