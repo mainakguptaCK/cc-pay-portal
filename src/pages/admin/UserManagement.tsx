@@ -42,7 +42,7 @@ const UserManagement: React.FC = () => {
           id: user.id.toString(),
           name: user.displayName,
           email: user.Email,
-          isLocked: user.AccountStatus !== "Active",
+          isLocked: !user.accountEnabled,
           role: "customer",
         }));
         setAllUsers(mappedUsers);
