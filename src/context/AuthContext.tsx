@@ -64,9 +64,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
           const authData = await response.json();
+          console.log('authData : ',authData);
           
           if (authData.clientPrincipal) {
             const { userDetails, userRoles, claims, accessToken } = authData.clientPrincipal;
+
+            console.log('access token : ',accessToken);
+            console.log('clientPrincipal : ',authData.clientPrincipal);
 
             // Extract roles from claims array
             const extractedRoles: string[] = [];
