@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, Edit, User, CreditCard as CreditCardIcon, Mail, AlertCircle } from 'lucide-react';
+import {
+  Lock, Unlock, Edit, User, CreditCard as CreditCardIcon,
+  Mail, AlertCircle
+} from 'lucide-react';
 import Card, { CardBody, CardHeader } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { useCreditCard } from '../../context/CreditCardContext';
-import { User as UserType } from '../../types';
+import { User as UserType, CreditCard } from '../../types';
 
 const UserManagement: React.FC = () => {
-  const { allCards, lockUserAccount, updateUserCreditLimit } = useCreditCard();
+  const { lockUserAccount, updateUserCreditLimit } = useCreditCard();
   const [allUsers, setAllUsers] = useState<UserType[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [creditLimits, setCreditLimits] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [userCards, setUserCards] = useState<CreditCard[]>([]);
 
   // Fetch users from backend
   useEffect(() => {
@@ -20,16 +24,13 @@ const UserManagement: React.FC = () => {
       try {
         const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/user/findAllUsers');
         const data = await response.json();
-
-        // Map API response to your internal UserType
         const mappedUsers: UserType[] = data.users.map((user: any) => ({
           id: user.id.toString(),
           name: user.displayName,
           email: user.Email,
           isLocked: user.AccountStatus !== 'Active',
-          role: 'customer', // Assuming all fetched users are customers
+          role: 'customer',
         }));
-
         setAllUsers(mappedUsers);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -41,19 +42,36 @@ const UserManagement: React.FC = () => {
     fetchUsers();
   }, []);
 
-  // Filter users
-  const filteredUsers = allUsers.filter(user => 
-    (searchQuery === '' || 
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-  
-  // Get user's cards
-  const getUserCards = (userId: string) => {
-    return allCards.filter(card => card.userId === userId);
-  };
+  // Fetch credit card details when user is selected
+  useEffect(() => {
+    const fetchUserCards = async (userId: string) => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/api/card/getCardDetails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ UserID: userId })
+        });
+        const data = await response.json();
+        setUserCards(data.cards || []);
+      } catch (error) {
+        console.error('Error fetching user cards:', error);
+        setUserCards([]);
+      }
+    };
 
-  // Format currency
+    if (selectedUser) {
+      fetchUserCards(selectedUser.id);
+    } else {
+      setUserCards([]);
+    }
+  }, [selectedUser]);
+
+  const filteredUsers = allUsers.filter(user =>
+    searchQuery === '' ||
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -61,11 +79,9 @@ const UserManagement: React.FC = () => {
     }).format(amount);
   };
 
-  // Handle credit limit update
   const handleCreditLimitUpdate = (cardId: string) => {
     const newLimit = creditLimits[cardId];
     if (!newLimit) return;
-
     updateUserCreditLimit(selectedUser!.id, Number(newLimit));
     setCreditLimits(prev => ({ ...prev, [cardId]: '' }));
   };
@@ -221,9 +237,9 @@ const UserManagement: React.FC = () => {
                   <h2 className="text-lg font-semibold text-gray-800">Credit Card Information</h2>
                 </CardHeader>
                 <CardBody>
-                  {getUserCards(selectedUser.id).length > 0 ? (
+                  {userCards.length > 0 ? (
                     <div className="space-y-6">
-                      {getUserCards(selectedUser.id).map(card => (
+                      {userCards.map(card => (
                         <div key={card.id} className="bg-gray-50 rounded-lg p-4">
                           <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center">
