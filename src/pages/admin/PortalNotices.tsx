@@ -19,7 +19,7 @@ const PortalNotices: React.FC = () => {
   });
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/admin/getAllAlertNotifications')
+    fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/admin/getAllAlertNotifications')
       .then(res => res.json())
       .then(data => {
         if (data.alerts) {
