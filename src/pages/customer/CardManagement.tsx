@@ -11,7 +11,7 @@ import { useAuth } from '../../context/useAuth';
 const CardManagement: React.FC = () => {
   const [userCards, setUserCards] = useState<CardList[]>([]);
   // const { userCards, updateCardSettings, blockCard } = useState<Card[]>([]);
-  const [activeCardId, setActiveCardId] = useState(null);
+  const [activeCardId, setActiveCardId] = useState<any>(null);
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
 
