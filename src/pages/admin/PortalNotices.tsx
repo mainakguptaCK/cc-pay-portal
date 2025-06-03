@@ -77,7 +77,7 @@ const PortalNotices: React.FC = () => {
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/admin/createAlertNotification', {
+      const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/admin/createAlertNotification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
