@@ -41,6 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .select('id,displayName,mail,accountEnabled')
         .get();
 
+      console.log('user details from microsoft graph : ',user);
+
       return {
         id: user.id,
         name: user.displayName,
