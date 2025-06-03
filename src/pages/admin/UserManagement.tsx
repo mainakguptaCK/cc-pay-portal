@@ -52,6 +52,7 @@ const UserManagement: React.FC = () => {
           body: JSON.stringify({ UserID: userId })
         });
         const data = await response.json();
+        console.log(data.cards);
         setUserCards(data.cards || []);
       } catch (error) {
         console.error('Error fetching user cards:', error);
