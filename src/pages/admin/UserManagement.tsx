@@ -53,7 +53,18 @@ const UserManagement: React.FC = () => {
         });
         const data = await response.json();
         console.log(data.cards);
-        setUserCards(data.cards || []);
+        const mappedCards: CreditCard[] = (data.cards || []).map((card: any) => ({
+          id: card.CardID.toString(),
+          cardNumber: card.CardNumber,
+          cardType: card.CardType,
+          creditLimit: card.CreditLimit,
+          totalOutstanding: card.OutStandingBalance,
+          availableLimit: card.CreditLimit - card.OutStandingBalance,
+          cardholderName: card.CardholderName,
+          isBlocked: card.CardStatus !== 'Active',
+          expirationDate: card.ExpirationDate,
+        }));
+        setUserCards(mappedCards);
       } catch (error) {
         console.error('Error fetching user cards:', error);
         setUserCards([]);
