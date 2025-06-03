@@ -14,39 +14,42 @@ const ROLE_CLAIM_TYPES = [
   'roles',
   'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
 ];
+
 const EMAIL_CLAIM_TYPES = [
   'emails',
-  'http://schemas.microsoft.com/ws/2008/06/identity/claims/email'
+  'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress',
+  'email'
 ];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   
   // Initialize Microsoft Graph Client
-  const getGraphClient = (accessToken: string) => {
+  const getGraphClient = (token: string) => {
     return Client.init({
       authProvider: (done) => {
-        done(null, accessToken);
+        done(null, token);
       }
     });
   };
 
   // Fetch user details from Microsoft Graph
-  const fetchUserDetails = async (userId: string, accessToken: string) => {
+  const fetchUserDetails = async (userId: string, token: string) => {
     try {
-      const graphClient = getGraphClient(accessToken);
+      const graphClient = getGraphClient(token);
       const user = await graphClient
-        .api(`/users/${userId}`)
-        .select('id,displayName,mail,accountEnabled')
+        .api('/me')
+        .select('id,displayName,mail,accountEnabled,userPrincipalName')
         .get();
 
-      console.log('user details from microsoft graph : ',user);
+      console.log('Graph API user details:', user);
 
       return {
         id: user.id,
         name: user.displayName,
-        email: user.mail,
+        email: user.mail || user.userPrincipalName,
         isEnabled: user.accountEnabled
       };
     } catch (error) {
@@ -60,21 +63,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const checkAuth = async () => {
       try {
         const response = await fetch('/.auth/me');
-        
         const contentType = response.headers.get('content-type');
+        
         if (contentType && contentType.includes('application/json')) {
           const authData = await response.json();
-          console.log('authData : ',authData);
+          console.log('Auth data:', authData);
           
           if (authData.clientPrincipal) {
             const { userDetails, userRoles, claims, accessToken } = authData.clientPrincipal;
+            console.log('Client principal:', authData.clientPrincipal);
+            console.log('Access token:', accessToken);
 
-            console.log('access token : ',accessToken);
-            console.log('clientPrincipal : ',authData.clientPrincipal);
+            setAccessToken(accessToken);
 
-            // Extract roles from claims array
+            // Extract roles and email from claims
             const extractedRoles: string[] = [];
             const extractedEmails: string[] = [];
+            
             claims.forEach((claim: Claim) => {
               if (ROLE_CLAIM_TYPES.includes(claim.typ)) {
                 extractedRoles.push(claim.val);
@@ -85,19 +90,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             });
 
             const uniqueExtractedRoles = Array.from(new Set(extractedRoles));
-            const userEmail = extractedEmails[0];
-            console.log('userEmail : ',userEmail);
             const hasAdminRole = uniqueExtractedRoles.includes('admin');
+            const userEmail = extractedEmails[0];
 
-            // Fetch additional user details from Graph API
-            const userId = authData.clientPrincipal.userId;
-            const graphUserDetails = await fetchUserDetails(userId, accessToken);
+            // Fetch additional user details from Graph API if we have a token
+            let graphUserDetails = null;
+            if (accessToken) {
+              graphUserDetails = await fetchUserDetails(authData.clientPrincipal.userId, accessToken);
+            }
 
             // Create user object combining ADB2C and Graph API data
             const user: User = {
-              id: userId,
+              id: authData.clientPrincipal.userId,
               name: graphUserDetails?.name || userDetails,
-              email: userEmail || userDetails,
+              email: graphUserDetails?.email || userEmail || userDetails,
               role: hasAdminRole ? 'admin' : 'customer',
               isLocked: graphUserDetails ? !graphUserDetails.isEnabled : false
             };
@@ -105,18 +111,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setCurrentUser(user);
 
             // Register Account in the backend
-            await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/admin/createAccount', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                UserID: userId,
-                AccountType: "Active",
-                CurrentBalance: 0.00,
-                AvailableCredit: 0.00,
-              }),
-            });
+            try {
+              await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/admin/createAccount', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  UserID: user.id,
+                  AccountType: "Active",
+                  CurrentBalance: 0.00,
+                  AvailableCredit: 0.00,
+                }),
+              });
+            } catch (error) {
+              console.error('Error registering account:', error);
+            }
           }
         } else {
           console.log('Auth endpoint not available, falling back to mock auth');
@@ -152,9 +162,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('ADB2C logout failed, clearing local state only');
       }
       setCurrentUser(null);
+      setAccessToken(null);
     } catch (error) {
       console.log('Logout error, clearing local state:', error);
       setCurrentUser(null);
+      setAccessToken(null);
     }
   };
   
