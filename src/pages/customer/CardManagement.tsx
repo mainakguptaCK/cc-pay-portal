@@ -11,7 +11,7 @@ import { useAuth } from '../../context/useAuth';
 const CardManagement: React.FC = () => {
   const [userCards, setUserCards] = useState<CardList[]>([]);
   // const { userCards, updateCardSettings, blockCard } = useState<Card[]>([]);
-  const [activeCardId, setActiveCardId] = useState<string>(userCards.length > 0 ? userCards[0].id : '');
+  const [activeCardId, setActiveCardId] = useState(null);
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
 
@@ -58,9 +58,12 @@ const CardManagement: React.FC = () => {
       fetchData();
     }, [userId]);
   
-  const activeCard = userCards.find(card => card.id === activeCardId);
+  // const activeCard = userCards.find(card => card.id === activeCardId);
+  const activeCard = userCards.length >  0 ? userCards[0] : null;
   console.log('activeCard : ',activeCard);
-  
+  console.log('userCards : ', userCards);
+  console.log('userCards : ', userCards[0]);
+
   if (userCards.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
