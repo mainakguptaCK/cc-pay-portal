@@ -44,6 +44,15 @@ const CardManagement: React.FC = () => {
             availableLimit: card.CreditLimit - card.OutStandingBalance,
             totalOutstanding: card.OutStandingBalance,
             dueDate: new Date(card.PaymentDueDate).toLocaleDateString(),
+            settings: {
+              domesticTransactions: card.domesticTransactions,
+              internationalTransactions: card.internationalTransactions,
+              touchToPay: card.touchToPay,
+              touchToPayLimit: card.touchToPayLimit || 0, // Assuming a default if not present or handle appropriately
+              onlinePayments: card.onlinePayments,
+              atmWithdrawals: card.atmWithdrawals,
+              merchantPosPayments: card.merchantPosPayments,
+            }
           }));
   
           setUserCards(normalizedCards);
