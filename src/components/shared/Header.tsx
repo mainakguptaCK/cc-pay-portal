@@ -23,7 +23,8 @@ const Header: React.FC = () => {
         { name: 'Dashboard', path: '/admin' },
         { name: 'Manage Users', path: '/admin/users' },
         { name: 'Portal Notices', path: '/admin/notices' },
-        { name: 'Credit Decisions', path: '/admin/decisions' },
+        // Removing Credit Decision for now
+        // { name: 'Credit Decisions', path: '/admin/decisions' },
         { name: 'Fees Management', path: '/admin/fees' },
       ]
     : [
