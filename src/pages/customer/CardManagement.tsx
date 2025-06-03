@@ -61,6 +61,7 @@ const CardManagement: React.FC = () => {
   // const activeCard = userCards.find(card => card.id === activeCardId);
   const activeCard = userCards.length >  0 ? userCards[0] : null;
   console.log('activeCard : ',activeCard);
+  console.log('activeCard settings: ',activeCard?.settings);
   console.log('userCards : ', userCards);
   console.log('userCards : ', userCards[0]);
 
