@@ -102,6 +102,7 @@ const CardManagement: React.FC = () => {
     // updateCardSettings(activeCardId, { [setting]: value }); 
     // Add Toggle settings API here
     return async () => {
+      console.log('inside toggleSetting');
       // Check if activeCard is available to prevent errors
       if (!activeCard) {
         console.warn("No active card available to toggle settings.");
