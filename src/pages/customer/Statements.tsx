@@ -40,6 +40,9 @@ const Statements: React.FC = () => {
           availableLimit: card.CreditLimit - card.OutStandingBalance,
           totalOutstanding: card.OutStandingBalance,
           dueDate: new Date(card.PaymentDueDate).toLocaleDateString(),
+          StatementCycleFrequency: card.StatementCycleFrequency,
+          BillingDate: card.BillingDate,
+          PaymentDue: card.PaymentDue
         }));
         setUserCards(normalizedCards);
       } catch (error) {
@@ -49,6 +52,10 @@ const Statements: React.FC = () => {
 
     fetchData();
   }, [userId]);
+
+  const selectedCardData = selectedCard === 'all'
+    ? null
+    : userCards.find(card => card.id === selectedCard);
 
   const filteredStatements = userStatements
     .filter(statement =>
@@ -171,33 +178,40 @@ const Statements: React.FC = () => {
 
         {/* Statement Info */}
         <div>
-          <Card className="mb-6">
-            <CardHeader>
-              <h2 className="text-lg font-semibold text-gray-800">Statement Information</h2>
-            </CardHeader>
-            <CardBody>
+        <Card className="mb-6">
+          <CardHeader>
+            <h2 className="text-lg font-semibold text-gray-800">Statement Information</h2>
+          </CardHeader>
+          <CardBody>
+            {selectedCardData ? (
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-gray-500">Statement Cycle</p>
-                  <p className="font-medium">Monthly</p>
+                  <p className="font-medium">{selectedCardData.StatementCycleFrequency}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Billing Period</p>
-                  <p className="font-medium">1st to Last day of month</p>
+                  <p className="font-medium">{selectedCardData.BillingDate}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Payment Due</p>
-                  <p className="font-medium">15 days after statement date</p>
+                  <p className="font-medium">{selectedCardData.PaymentDue} days after statement date</p>
                 </div>
               </div>
-              <div className="mt-6">
-                <Button variant="outline" fullWidth>
-                  Manage Statement Preferences
-                </Button>
+            ) : (
+              <div className="space-y-4 text-gray-500 text-sm">
+                <p>Select a specific card to view statement details.</p>
               </div>
-            </CardBody>
-          </Card>
-        </div>
+            )}
+
+            <div className="mt-6">
+              <Button variant="outline" fullWidth>
+                Manage Statement Preferences
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
       </div>
     </div>
   );
