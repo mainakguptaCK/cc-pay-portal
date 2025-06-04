@@ -125,7 +125,10 @@ const CardManagement: React.FC = () => {
                     className={`px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors ${
                       card.id === activeCardId ? 'bg-blue-50 border-l-4 border-blue-700' : ''
                     }`}
-                    onClick={() => setActiveCardId(card.id)}
+                    onClick={() => {
+                      console.log('cardId : ',card.id);
+                      setActiveCardId(card.id)
+                    }}
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`p-2 rounded-full ${
