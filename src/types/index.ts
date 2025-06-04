@@ -85,6 +85,7 @@ export interface Statement {
   minimumPayment: number;
   dueDate: string;
   isDownloaded: boolean;
+  cardId: string; 
 }
 
 export interface Fee {
