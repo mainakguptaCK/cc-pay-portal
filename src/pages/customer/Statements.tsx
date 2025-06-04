@@ -154,37 +154,6 @@ const Statements: React.FC = () => {
             </CardBody>
           </Card>
           
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <h2 className="text-lg font-semibold text-gray-800">Quick Actions</h2>
-            </CardHeader>
-            <CardBody>
-              <div className="space-y-3">
-                <Button
-                  variant="outline"
-                  fullWidth
-                  leftIcon={<Download size={16} />}
-                >
-                  Download Year-End Summary
-                </Button>
-                <Button
-                  variant="outline"
-                  fullWidth
-                  leftIcon={<Eye size={16} />}
-                >
-                  View Payment History
-                </Button>
-                <Button
-                  variant="outline"
-                  fullWidth
-                  leftIcon={<Calendar size={16} />}
-                >
-                  Set Statement Reminders
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
         </div>
       </div>
     </div>
