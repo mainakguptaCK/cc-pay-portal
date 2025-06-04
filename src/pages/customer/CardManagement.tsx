@@ -80,7 +80,8 @@ const CardManagement: React.FC = () => {
         body: JSON.stringify({ 
           UserID: userId, 
           CardNumber: activeCard.cardNumber, 
-          settingName: setting 
+          settingName: setting,
+          currentValue :value
         }),
       });
 
