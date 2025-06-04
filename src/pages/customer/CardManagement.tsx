@@ -101,6 +101,53 @@ const CardManagement: React.FC = () => {
     console.log('setting val : ',value);
     // updateCardSettings(activeCardId, { [setting]: value }); 
     // Add Toggle settings API here
+    return async () => {
+      // Check if activeCard is available to prevent errors
+      if (!activeCard) {
+        console.warn("No active card available to toggle settings.");
+        return;
+      }
+      try {
+        const responses = await Promise.all([
+          fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/toggleCardSettings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              UserID: userId, 
+              CardNumber : activeCard.cardNumber, 
+              settingName : setting }),
+          })
+        ]);
+
+        const actualResponse = responses[0]; 
+        if (!actualResponse.ok) {
+          const errorData = await actualResponse.json().catch(() => ({ message: 'Unknown error' }));
+          throw new Error(`Failed to toggle card setting: ${actualResponse.status} - ${errorData.message || actualResponse.statusText}`);
+        }
+  
+        const toggleCardResp = await actualResponse.json();
+  
+        console.log('Toggle card response : ', toggleCardResp);
+  
+        if (toggleCardResp && toggleCardResp[setting] !== undefined) {
+            setUserCards(prevCards => prevCards.map(card => {
+                if (card.id === activeCard.id) {
+                    return {
+                        ...card,
+                        settings: {
+                            ...card.settings,
+                            [setting]: toggleCardResp[setting]
+                        }
+                    };
+                }
+                return card;
+            }));
+        }
+  
+      } catch (error) {
+        console.error('Error toggling card setting:', error);
+      }
+    }  
   };
   
   const handleBlockCard = () => {
