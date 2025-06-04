@@ -93,14 +93,14 @@ const CardManagement: React.FC = () => {
       const toggleCardResp = await response.json();
       console.log('Toggle card response : ', toggleCardResp);
 
-      if (toggleCardResp && toggleCardResp[setting] !== undefined) {
+      if (toggleCardResp && toggleCardResp.message && typeof toggleCardResp.message === 'object' && toggleCardResp.message[setting] !== undefined) {
         setUserCards(prevCards => prevCards.map(card => {
           if (card.id === activeCard.id) {
             return {
               ...card,
               settings: {
                 ...card.settings,
-                [setting]: toggleCardResp[setting]
+                [setting]: toggleCardResp.message[setting]
               }
             };
           }
