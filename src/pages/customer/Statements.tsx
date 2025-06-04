@@ -75,7 +75,7 @@ const Statements: React.FC = () => {
 
     try {
       const res = await fetch(
-        "https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/transactions/download",
+        "https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/statement/download",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
