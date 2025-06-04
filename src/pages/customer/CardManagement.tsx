@@ -3,6 +3,7 @@ import { CreditCard as CreditCardIcon, Shield, Save, X, AlertCircle } from 'luci
 import Card, { CardBody, CardHeader } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+import Switch from '../../components/ui/Switch';
 import { CardType as CardTier, CreditCard as CardList} from '../../types';
 import { useAuth } from '../../context/useAuth';
 
