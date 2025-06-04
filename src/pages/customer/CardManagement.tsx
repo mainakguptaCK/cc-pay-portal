@@ -100,7 +100,7 @@ const CardManagement: React.FC = () => {
               ...card,
               settings: {
                 ...card.settings,
-                [setting]: toggleCardResp.message[setting]
+                setting: toggleCardResp.message[setting]
               }});
 
             return {
