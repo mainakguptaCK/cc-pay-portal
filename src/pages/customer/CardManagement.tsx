@@ -1,84 +1,122 @@
 import React, { useState, useEffect } from 'react';
-import { CreditCard as CreditCardIcon, Shield, AlertCircle, Settings, Lock, Unlock } from 'lucide-react';
-import Card, { CardHeader, CardBody, CardFooter } from '../../components/ui/Card';
+import { CreditCard as CreditCardIcon, Shield, Save, X, AlertCircle } from 'lucide-react';
+import Card, { CardBody, CardHeader } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
-import Switch from '../../components/ui/Switch';
-// import { useCreditCard } from '../../context/CreditCardContext';
-import { CardType as CardTier, CreditCard as CardList} from '../../types'; // Adjust path as needed
+import Input from '../../components/ui/Input';
+import { CardType as CardTier, CreditCard as CardList} from '../../types';
 import { useAuth } from '../../context/useAuth';
-// const Card = CreditCard;
 
 const CardManagement: React.FC = () => {
   const [userCards, setUserCards] = useState<CardList[]>([]);
-  // const { userCards, updateCardSettings, blockCard } = useState<Card[]>([]);
   const [activeCardId, setActiveCardId] = useState<string>('');
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
 
   const activeCard: CardList | undefined = activeCardId
-  ? userCards.find(card => card.id === activeCardId) // Prioritize: If activeCardId is set, find the card with that ID
-  : (userCards.length > 0 ? userCards[0] : undefined); // Fallback: If no activeCardId, and userCards exist, use the first card. Otherwise, undefined.
-
-
-
+    ? userCards.find(card => card.id === activeCardId)
+    : (userCards.length > 0 ? userCards[0] : undefined);
 
   useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const [cardsRes] = await Promise.all([
-            fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/getCardDetails', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ UserID: userId }),
-            })
-          ]);
-  
-          const cardsData = await cardsRes.json();
-          console.log('cardsData : ',cardsData);
-          // const transactionsData = await txRes.json();
-  
-          const normalizedCards = cardsData.cards.map((card: any) => ({
-            id: card.CardID.toString(),
-            cardNumber: card.CardNumber,
-            isBlocked: card.CardStatus !== 'Active',
-            cardType: card.CardType,
-            cardholderName: card.CardholderName,
-            createdDate: new Date(card.CreatedDate),
-            expiryDate: new Date(card.ExpirationDate).toLocaleDateString(),
-            lastModifiedDate: new Date(card.LastModifiedDate),
-            creditLimit: card.CreditLimit,
-            availableLimit: card.CreditLimit - card.OutStandingBalance,
-            totalOutstanding: card.OutStandingBalance,
-            dueDate: new Date(card.PaymentDueDate).toLocaleDateString(),
-            settings: {
-              domesticTransactions: card.domesticTransactions,
-              internationalTransactions: card.internationalTransactions,
-              touchToPay: card.touchToPay,
-              touchToPayLimit: card.touchToPayLimit || 0, // Assuming a default if not present or handle appropriately
-              onlinePayments: card.onlinePayments,
-              atmWithdrawals: card.atmWithdrawals,
-              merchantPosPayments: card.merchantPosPayments,
-            }
-          }));
-  
-          setUserCards(normalizedCards);
-          // setUserTransactions(transactionsData.Transactions);
-          //console.log(transactionsData);
-          
-        } catch (error) {
-          console.error('Error fetching card or transaction data:', error);
-        }
-      };
-  
-      fetchData();
-    }, [userId]);
-  
-  // const activeCard = userCards.find(card => card.id === activeCardId);
-  // const activeCard = userCards.length >  0 ? userCards[0] : null;
-  console.log('activeCard : ',activeCard);
-  console.log('activeCard settings: ',activeCard?.settings);
-  console.log('userCards : ', userCards);
-  console.log('userCards : ', userCards[0]);
+    const fetchData = async () => {
+      try {
+        const [cardsRes] = await Promise.all([
+          fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/getCardDetails', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ UserID: userId }),
+          })
+        ]);
+
+        const cardsData = await cardsRes.json();
+        console.log('cardsData : ',cardsData);
+
+        const normalizedCards = cardsData.cards.map((card: any) => ({
+          id: card.CardID.toString(),
+          cardNumber: card.CardNumber,
+          isBlocked: card.CardStatus !== 'Active',
+          cardType: card.CardType,
+          cardholderName: card.CardholderName,
+          createdDate: new Date(card.CreatedDate),
+          expiryDate: new Date(card.ExpirationDate).toLocaleDateString(),
+          lastModifiedDate: new Date(card.LastModifiedDate),
+          creditLimit: card.CreditLimit,
+          availableLimit: card.CreditLimit - card.OutStandingBalance,
+          totalOutstanding: card.OutStandingBalance,
+          dueDate: new Date(card.PaymentDueDate).toLocaleDateString(),
+          settings: {
+            domesticTransactions: card.domesticTransactions,
+            internationalTransactions: card.internationalTransactions,
+            touchToPay: card.touchToPay,
+            touchToPayLimit: card.touchToPayLimit || 0,
+            onlinePayments: card.onlinePayments,
+            atmWithdrawals: card.atmWithdrawals,
+            merchantPosPayments: card.merchantPosPayments,
+          }
+        }));
+
+        setUserCards(normalizedCards);
+      } catch (error) {
+        console.error('Error fetching card or transaction data:', error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  const toggleSetting = async (setting: keyof typeof activeCard.settings, value: boolean) => {
+    console.log('setting : ',setting);
+    console.log('setting val : ',value);
+
+    if (!activeCard) {
+      console.warn("No active card available to toggle settings.");
+      return;
+    }
+
+    try {
+      const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/toggleCardSettings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          UserID: userId, 
+          CardNumber: activeCard.cardNumber, 
+          settingName: setting 
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(`Failed to toggle card setting: ${response.status} - ${errorData.message || response.statusText}`);
+      }
+
+      const toggleCardResp = await response.json();
+      console.log('Toggle card response : ', toggleCardResp);
+
+      if (toggleCardResp && toggleCardResp[setting] !== undefined) {
+        setUserCards(prevCards => prevCards.map(card => {
+          if (card.id === activeCard.id) {
+            return {
+              ...card,
+              settings: {
+                ...card.settings,
+                [setting]: toggleCardResp[setting]
+              }
+            };
+          }
+          return card;
+        }));
+      }
+    } catch (error) {
+      console.error('Error toggling card setting:', error);
+    }
+  };
+
+  const handleBlockCard = () => {
+    // Add block card Api here
+  };
+
+  const formatCardNumber = (cardNumber: string) => {
+    return cardNumber.replace(/(\*{4})-(\*{4})-(\*{4})-(\d{4})/, '$1 $2 $3 $4');
+  };
 
   if (userCards.length === 0) {
     return (
@@ -91,75 +129,11 @@ const CardManagement: React.FC = () => {
       </div>
     );
   }
-  
+
   if (!activeCard) {
     return null;
   }
-  
-  const toggleSetting = (setting: keyof typeof activeCard.settings, value: boolean) => {
-    console.log('setting : ',setting);
-    console.log('setting val : ',value);
-    // updateCardSettings(activeCardId, { [setting]: value }); 
-    // Add Toggle settings API here
-    return async () => {
-      console.log('inside toggleSetting');
-      // Check if activeCard is available to prevent errors
-      if (!activeCard) {
-        console.warn("No active card available to toggle settings.");
-        return;
-      }
-      try {
-        const responses = await Promise.all([
-          fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/toggleCardSettings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              UserID: userId, 
-              CardNumber : activeCard.cardNumber, 
-              settingName : setting }),
-          })
-        ]);
 
-        const actualResponse = responses[0]; 
-        if (!actualResponse.ok) {
-          const errorData = await actualResponse.json().catch(() => ({ message: 'Unknown error' }));
-          throw new Error(`Failed to toggle card setting: ${actualResponse.status} - ${errorData.message || actualResponse.statusText}`);
-        }
-  
-        const toggleCardResp = await actualResponse.json();
-  
-        console.log('Toggle card response : ', toggleCardResp);
-  
-        if (toggleCardResp && toggleCardResp[setting] !== undefined) {
-            setUserCards(prevCards => prevCards.map(card => {
-                if (card.id === activeCard.id) {
-                    return {
-                        ...card,
-                        settings: {
-                            ...card.settings,
-                            [setting]: toggleCardResp[setting]
-                        }
-                    };
-                }
-                return card;
-            }));
-        }
-  
-      } catch (error) {
-        console.error('Error toggling card setting:', error);
-      }
-    }  
-  };
-  
-  const handleBlockCard = () => {
-    // blockCard(activeCardId, !activeCard.isBlocked);
-    // Add block card Api here
-  };
-  
-  const formatCardNumber = (cardNumber: string) => {
-    return cardNumber.replace(/(\*{4})-(\*{4})-(\*{4})-(\d{4})/, '$1 $2 $3 $4');
-  };
-  
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">Card Management</h1>
@@ -214,7 +188,7 @@ const CardManagement: React.FC = () => {
                 <Button
                   variant={activeCard.isBlocked ? 'success' : 'danger'}
                   fullWidth
-                  leftIcon={activeCard.isBlocked ? <Unlock size={16} /> : <Lock size={16} />}
+                  leftIcon={activeCard.isBlocked ? <Save size={16} /> : <X size={16} />}
                   onClick={handleBlockCard}
                 >
                   {activeCard.isBlocked ? 'Unblock Card' : 'Block Card'}
@@ -341,7 +315,7 @@ const CardManagement: React.FC = () => {
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">Contactless Settings</h2>
               <div className="p-2 rounded-full bg-blue-50">
-                <Settings size={18} className="text-blue-700" />
+                <Shield size={18} className="text-blue-700" />
               </div>
             </CardHeader>
             <CardBody className="divide-y divide-gray-200">
@@ -367,11 +341,6 @@ const CardManagement: React.FC = () => {
                 />
               </div>
             </CardBody>
-            <CardFooter className="bg-gray-50">
-              <div className="text-sm text-gray-600">
-                <p>Contact customer support for more security options or to report suspicious activity.</p>
-              </div>
-            </CardFooter>
           </Card>
         </div>
       </div>
