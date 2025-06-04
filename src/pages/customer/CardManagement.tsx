@@ -15,6 +15,12 @@ const CardManagement: React.FC = () => {
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
 
+  const activeCard: CardList | undefined = activeCardId
+  ? userCards.find(card => card.id === activeCardId) // Prioritize: If activeCardId is set, find the card with that ID
+  : (userCards.length > 0 ? userCards[0] : undefined); // Fallback: If no activeCardId, and userCards exist, use the first card. Otherwise, undefined.
+
+
+
 
   useEffect(() => {
       const fetchData = async () => {
@@ -68,7 +74,7 @@ const CardManagement: React.FC = () => {
     }, [userId]);
   
   // const activeCard = userCards.find(card => card.id === activeCardId);
-  const activeCard = userCards.length >  0 ? userCards[0] : null;
+  // const activeCard = userCards.length >  0 ? userCards[0] : null;
   console.log('activeCard : ',activeCard);
   console.log('activeCard settings: ',activeCard?.settings);
   console.log('userCards : ', userCards);
