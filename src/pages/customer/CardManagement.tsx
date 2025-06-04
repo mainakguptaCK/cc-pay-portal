@@ -96,6 +96,13 @@ const CardManagement: React.FC = () => {
       if (toggleCardResp && toggleCardResp.message && typeof toggleCardResp.message === 'object' && toggleCardResp.message[setting] !== undefined) {
         setUserCards(prevCards => prevCards.map(card => {
           if (card.id === activeCard.id) {
+            console.log('return switch val : ',{
+              ...card,
+              settings: {
+                ...card.settings,
+                [setting]: toggleCardResp.message[setting]
+              }});
+
             return {
               ...card,
               settings: {
