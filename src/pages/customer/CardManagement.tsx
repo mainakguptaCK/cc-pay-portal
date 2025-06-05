@@ -18,6 +18,10 @@ const CardManagement: React.FC = () => {
   //   : (userCards.length > 0 ? userCards[0] : undefined);
   const [activeCard,setActiveCard]= useState<CardList | undefined >(undefined)
 
+  const test=(activeCardId:string)=>{
+    setActiveCard(userCards.find(card => card.id === activeCardId))
+  }
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -172,9 +176,7 @@ const CardManagement: React.FC = () => {
                     onClick={() => {
                       console.log('cardId : ',card.id);
                       setActiveCardId(card.id)
-                      setActiveCard((prev)=> prev?.id===activeCardId 
-                          ? userCards.find(card => card.id === activeCardId)
-                          : (userCards.length > 0 ? userCards[0] : undefined))
+                      test(card.id);
                       console.log('show active card============>',JSON.stringify(activeCard,null,2))
                     }}
                   >
