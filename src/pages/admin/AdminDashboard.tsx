@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, CreditCard as CreditCardIcon, Wallet, Bell, BarChart3 } from 'lucide-react';
 import Card, { CardBody, CardHeader } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { useCreditCard } from '../../context/CreditCardContext';
+import { useAuth } from '../../context/useAuth';
 
 const AdminDashboard: React.FC = () => {
   const { 
@@ -11,16 +12,48 @@ const AdminDashboard: React.FC = () => {
     creditDecisions,
     updatePortalNotice 
   } = useCreditCard();
+
+  const { currentUser } = useAuth();
+  const userId = currentUser?.id;
+  const [totalCreditLimit,settotalCreditLimit] = useState<number>(0);
+  const [totalOutstanding,settotalOutstanding] = useState<number>(0);
+  const [totalAvailable,settotalAvailable] = useState<number>(0);
+  const [blockedCards,setblockedCards] = useState<number>(0);
   
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const [cardsRes] = await Promise.all([
+            fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/getCardAccountSummary', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ UserID: userId }),
+            })
+          ]);
+  
+          const cardsData = await cardsRes.json();
+          settotalCreditLimit(cardsData.message.TotalCreditLimit);
+          settotalOutstanding(cardsData.message.TotalOutstanding);
+          settotalAvailable(cardsData.message.AvailableCredit);
+          setblockedCards(cardsData.message.TotalBlockedCards);
+        }catch(error){
+          console.log(error)
+        }
+      };
+      fetchData()
+    },[userId]);
+
   const [selectedNotice, setSelectedNotice] = useState<string>(
     portalNotices.length > 0 ? portalNotices[0].id : ''
   );
   
   // Quick stats
-  const totalCreditLimit = allCards.reduce((sum, card) => sum + card.creditLimit, 0);
-  const totalOutstanding = allCards.reduce((sum, card) => sum + card.totalOutstanding, 0);
-  const totalAvailable = allCards.reduce((sum, card) => sum + card.availableLimit, 0);
-  const blockedCards = allCards.filter(card => card.isBlocked).length;
+  // const totalCreditLimit = allCards.reduce((sum, card) => sum + card.creditLimit, 0);
+  // const totalOutstanding = allCards.reduce((sum, card) => sum + card.totalOutstanding, 0);
+  // const totalAvailable = allCards.reduce((sum, card) => sum + card.availableLimit, 0);
+  // const blockedCards = allCards.filter(card => card.isBlocked).length;
+
+
   
   // Format currency
   const formatCurrency = (amount: number) => {
