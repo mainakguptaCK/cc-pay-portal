@@ -13,7 +13,9 @@ const CardManagement: React.FC = () => {
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
 
-  const [activeCard, setActiveCard]= useState<CardList|undefined>(undefined)
+  const [activeCard, setActiveCard]= useState<CardList|undefined>(activeCardId
+    ? userCards.find(card => card.id === activeCardId)
+    : (userCards.length > 0 ? userCards[0] : undefined))
   // const activeCard: CardList | undefined = activeCardId
   //   ? userCards.find(card => card.id === activeCardId)
   //   : (userCards.length > 0 ? userCards[0] : undefined);
