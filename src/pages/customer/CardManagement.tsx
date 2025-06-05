@@ -16,9 +16,7 @@ const CardManagement: React.FC = () => {
   // const activeCard: CardList | undefined = activeCardId
   //   ? userCards.find(card => card.id === activeCardId)
   //   : (userCards.length > 0 ? userCards[0] : undefined);
-  const [activeCard,setActiveCard]= useState(()=>activeCardId
-      ? userCards.find(card => card.id === activeCardId)
-      : (userCards.length > 0 ? userCards[0] : undefined))
+  const [activeCard,setActiveCard]= useState<CardList | undefined >(undefined)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +57,7 @@ const CardManagement: React.FC = () => {
         }));
 
         setUserCards(normalizedCards);
+        setActiveCard(normalizedCards[0])
       } catch (error) {
         console.error('Error fetching card or transaction data:', error);
       }
@@ -134,7 +133,7 @@ const CardManagement: React.FC = () => {
     return cardNumber.replace(/(\*{4})-(\*{4})-(\*{4})-(\d{4})/, '$1 $2 $3 $4');
   };
 
-  if (userCards.length === 0) {
+  if (userCards.length === 0 || !activeCard) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-8">Card Management</h1>
@@ -146,9 +145,9 @@ const CardManagement: React.FC = () => {
     );
   }
 
-  if (!activeCard) {
-    return null;
-  }
+  // if (!activeCard) {
+  //   return null;
+  // }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
