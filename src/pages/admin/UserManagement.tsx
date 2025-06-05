@@ -6,16 +6,13 @@ import {
   User,
   CreditCard as CreditCardIcon,
   Mail,
-  AlertCircle,
 } from "lucide-react";
 import Card, { CardBody, CardHeader } from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import { useCreditCard } from "../../context/CreditCardContext";
 import { User as UserType, CreditCard } from "../../types";
 
 const UserManagement: React.FC = () => {
-  const { lockUserAccount, updateUserCreditLimit } = useCreditCard();
   const [allUsers, setAllUsers] = useState<UserType[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -204,11 +201,45 @@ const UserManagement: React.FC = () => {
     }).format(amount);
   };
 
-  const handleCreditLimitUpdate = (cardId: string) => {
+  const handleCreditLimitUpdate = async (cardId: string) => {
     const newLimit = creditLimits[cardId];
-    if (!newLimit) return;
-    updateUserCreditLimit(selectedUser!.id, Number(newLimit));
-    setCreditLimits((prev) => ({ ...prev, [cardId]: "" }));
+    if (!newLimit || !selectedUser) return;
+
+    const card = userCards.find((c) => c.id === cardId);
+    if (!card) {
+      console.error("Card not found.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/admin/updateCardDetails",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            CardNumber: card.cardNumber,
+            UserID: selectedUser.id,
+            CreditLimit: parseFloat(newLimit),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update credit limit.");
+      }
+
+      const result = await response.json();
+      console.log("Credit limit updated:", result);
+
+      // Optionally refresh card data
+      setCreditLimits((prev) => ({ ...prev, [cardId]: "" }));
+      // Optionally, refetch card details here to reflect new limit
+    } catch (error) {
+      console.error("Error updating credit limit:", error);
+    }
   };
 
   const getCardTypeColor = (cardType: string) => {
