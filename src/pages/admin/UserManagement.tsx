@@ -458,11 +458,19 @@ const UserManagement: React.FC = () => {
 
               {/* Credit Card Details */}
               <Card>
-                <CardHeader>
+                <CardHeader className="flex justify-between items-center">
                   <h2 className="text-lg font-semibold text-gray-800">
                     Credit Card Information
                   </h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowCardForm(true)}
+                  >
+                    Issue New Card
+                  </Button>
                 </CardHeader>
+
                 <CardBody>
                   {userCards.length > 0 ? (
                     <div className="space-y-6">
@@ -556,79 +564,64 @@ const UserManagement: React.FC = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-6 text-gray-500">
-                      <CreditCardIcon
-                        size={48}
-                        className="mx-auto mb-4 text-gray-300"
-                      />
-                      <p>No credit cards found for this user.</p>
+                    <div className="text-center text-gray-500 py-6">
+                      <p>No credit cards associated with this user.</p>
+                    </div>
+                  )}
 
-                      {showCardForm ? (
-                        <div className="mt-4 space-y-3 text-left max-w-md mx-auto">
-                          <Input
-                            placeholder="Card Number"
-                            value={newCardDetails.cardNumber}
-                            onChange={(e) =>
-                              setNewCardDetails((prev) => ({
-                                ...prev,
-                                cardNumber: e.target.value,
-                              }))
-                            }
-                          />
-                          <Input
-                            placeholder="Card Type (e.g., Master, Platinum)"
-                            value={newCardDetails.cardType}
-                            onChange={(e) =>
-                              setNewCardDetails((prev) => ({
-                                ...prev,
-                                cardType: e.target.value,
-                              }))
-                            }
-                          />
-                          <Input
-                            placeholder="Credit Limit"
-                            type="number"
-                            value={newCardDetails.creditLimit}
-                            onChange={(e) =>
-                              setNewCardDetails((prev) => ({
-                                ...prev,
-                                creditLimit: e.target.value,
-                              }))
-                            }
-                          />
-                          <Input
-                            placeholder="Cardholder Name"
-                            value={newCardDetails.cardholderName}
-                            onChange={(e) =>
-                              setNewCardDetails((prev) => ({
-                                ...prev,
-                                cardholderName: e.target.value,
-                              }))
-                            }
-                          />
-                          <Button
-                            variant="primary"
-                            onClick={handleIssueNewCard}
-                          >
-                            Submit & Issue
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => setShowCardForm(false)}
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-3"
-                          onClick={() => setShowCardForm(true)}
-                        >
-                          Issue New Card
-                        </Button>
-                      )}
+                  {/* Show form only if user clicked "Issue New Card" */}
+                  {showCardForm && (
+                    <div className="mt-6 space-y-3 text-left max-w-md mx-auto">
+                      <Input
+                        placeholder="Card Number"
+                        value={newCardDetails.cardNumber}
+                        onChange={(e) =>
+                          setNewCardDetails((prev) => ({
+                            ...prev,
+                            cardNumber: e.target.value,
+                          }))
+                        }
+                      />
+                      <Input
+                        placeholder="Card Type (e.g., Master, Platinum)"
+                        value={newCardDetails.cardType}
+                        onChange={(e) =>
+                          setNewCardDetails((prev) => ({
+                            ...prev,
+                            cardType: e.target.value,
+                          }))
+                        }
+                      />
+                      <Input
+                        placeholder="Credit Limit"
+                        type="number"
+                        value={newCardDetails.creditLimit}
+                        onChange={(e) =>
+                          setNewCardDetails((prev) => ({
+                            ...prev,
+                            creditLimit: e.target.value,
+                          }))
+                        }
+                      />
+                      <Input
+                        placeholder="Cardholder Name"
+                        value={newCardDetails.cardholderName}
+                        onChange={(e) =>
+                          setNewCardDetails((prev) => ({
+                            ...prev,
+                            cardholderName: e.target.value,
+                          }))
+                        }
+                      />
+                      <Button variant="primary" onClick={handleIssueNewCard}>
+                        Submit & Issue
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowCardForm(false)}
+                      >
+                        Cancel
+                      </Button>
                     </div>
                   )}
                 </CardBody>
