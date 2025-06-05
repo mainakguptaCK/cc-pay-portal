@@ -103,7 +103,7 @@ const UserManagement: React.FC = () => {
     try {
       console.log(selectedUser);
       const response = await fetch(
-        "http://127.0.0.1:5000/api/admin/createCard",
+        "https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/admin/createCard",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
