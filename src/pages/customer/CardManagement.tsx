@@ -16,7 +16,7 @@ const CardManagement: React.FC = () => {
   // const activeCard: CardList | undefined = activeCardId
   //   ? userCards.find(card => card.id === activeCardId)
   //   : (userCards.length > 0 ? userCards[0] : undefined);
-  const [activeCard,setActiveCard]= useState(activeCardId
+  const [activeCard,setActiveCard]= useState(()=>activeCardId
       ? userCards.find(card => card.id === activeCardId)
       : (userCards.length > 0 ? userCards[0] : undefined))
 
