@@ -13,9 +13,14 @@ const CardManagement: React.FC = () => {
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
 
-  const activeCard: CardList | undefined = activeCardId
+  const [activeCard, setActiveCard]= useState<CardList|undefined>(undefined)
+  // const activeCard: CardList | undefined = activeCardId
+  //   ? userCards.find(card => card.id === activeCardId)
+  //   : (userCards.length > 0 ? userCards[0] : undefined);
+
+  const findActiveCard=(activeCardId: string)=> activeCardId
     ? userCards.find(card => card.id === activeCardId)
-    : (userCards.length > 0 ? userCards[0] : undefined);
+    : (userCards.length > 0 ? userCards[0] : undefined)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,12 +43,12 @@ const CardManagement: React.FC = () => {
           cardType: card.CardType,
           cardholderName: card.CardholderName,
           createdDate: new Date(card.CreatedDate),
-          expiryDate: new Date(card.ExpirationDate).toLocaleDateString(),
+          expiryDate: new Date(card.ExpirationDate).toLocaleDafindActiveCardring(),
           lastModifiedDate: new Date(card.LastModifiedDate),
           creditLimit: card.CreditLimit,
           availableLimit: card.CreditLimit - card.OutStandingBalance,
           totalOutstanding: card.OutStandingBalance,
-          dueDate: new Date(card.PaymentDueDate).toLocaleDateString(),
+          dueDate: new Date(card.PaymentDueDate).toLocaleDafindActiveCardring(),
           settings: {
             domesticTransactions: card.domesticTransactions,
             internationalTransactions: card.internationalTransactions,
@@ -169,6 +174,8 @@ const CardManagement: React.FC = () => {
                     onClick={() => {
                       console.log('cardId : ',card.id);
                       setActiveCardId(card.id)
+                      setActiveCard(findActiveCard(activeCardId))
+                      console.log(JSON.stringify(activeCard,null,2))
                     }}
                   >
                     <div className="flex items-center space-x-3">
