@@ -334,7 +334,6 @@ const CardManagement: React.FC = () => {
                 <div>
                   <p className="font-medium">Domestic Transactions</p>
                   <p className="text-sm text-gray-500">Allow transactions within the country</p>
-                  <p><h2>Domestic Transaction currently is : {activeCard.settings.domesticTransactions} </h2></p>
                 </div>
                 <Switch 
                   checked={activeCard.settings.domesticTransactions} 
@@ -357,7 +356,6 @@ const CardManagement: React.FC = () => {
                 <div>
                   <p className="font-medium">Online Payments</p>
                   <p className="text-sm text-gray-500">Allow online and e-commerce transactions</p>
-                  <p><h2>Online Transaction currently is : {activeCard.settings.onlinePayments?'true':'false'} </h2></p>
 
                 </div>
                 <Switch 
