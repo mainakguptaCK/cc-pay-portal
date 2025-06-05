@@ -32,6 +32,11 @@ const AdminDashboard: React.FC = () => {
           ]);
   
           const cardsData = await cardsRes.json();
+          console.log('cardsData : ',cardsData);
+          console.log('TotalCreditLimit',cardsData.message.TotalCreditLimit);
+          console.log('TotalOutstanding',cardsData.message.TotalOutstanding);
+          console.log('AvailableCredit',cardsData.message.AvailableCredit);
+          console.log('TotalBlockedCards',cardsData.message.TotalBlockedCards);
           settotalCreditLimit(cardsData.message.TotalCreditLimit);
           settotalOutstanding(cardsData.message.TotalOutstanding);
           settotalAvailable(cardsData.message.AvailableCredit);
