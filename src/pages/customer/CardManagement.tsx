@@ -172,7 +172,7 @@ const CardManagement: React.FC = () => {
                     onClick={() => {
                       console.log('cardId : ',card.id);
                       setActiveCardId(card.id)
-                      setActiveCard(activeCardId
+                      setActiveCard((prev)=> prev?.id===activeCardId 
                           ? userCards.find(card => card.id === activeCardId)
                           : (userCards.length > 0 ? userCards[0] : undefined))
                       console.log('show active card============>',JSON.stringify(activeCard,null,2))
