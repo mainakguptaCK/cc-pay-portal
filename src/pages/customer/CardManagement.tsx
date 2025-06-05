@@ -97,6 +97,7 @@ const CardManagement: React.FC = () => {
         setUserCards(prevCards => prevCards.map(card => {
           if (card.id === activeCard.id) {
 
+            console.log('check activeCard data : ',activeCard);
             console.log('[setting]',[setting]);
             console.log('toggleCardResp.message[setting]',toggleCardResp.message[setting]);
             console.log('return switch val : ',{
