@@ -37,10 +37,10 @@ const AdminDashboard: React.FC = () => {
           console.log('TotalOutstanding',cardsData.message.TotalOutstanding);
           console.log('AvailableCredit',cardsData.message.AvailableCredit);
           console.log('TotalBlockedCards',cardsData.message.TotalBlockedCards);
-          settotalCreditLimit(cardsData.message.TotalCreditLimit);
-          settotalOutstanding(cardsData.message.TotalOutstanding);
-          settotalAvailable(cardsData.message.AvailableCredit);
-          setblockedCards(cardsData.message.TotalBlockedCards);
+          // settotalCreditLimit(cardsData.message.TotalCreditLimit);
+          // settotalOutstanding(cardsData.message.TotalOutstanding);
+          // settotalAvailable(cardsData.message.AvailableCredit);
+          // setblockedCards(cardsData.message.TotalBlockedCards);
         }catch(error){
           console.log(error)
         }
