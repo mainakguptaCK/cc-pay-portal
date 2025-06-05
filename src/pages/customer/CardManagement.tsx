@@ -101,6 +101,14 @@ const CardManagement: React.FC = () => {
       console.log('Toggle card response : ', toggleCardResp);
 
       if (toggleCardResp && toggleCardResp.message && typeof toggleCardResp.message === 'object' && toggleCardResp.message[setting] !== undefined) {
+
+        setActiveCard({
+          ...activeCard,
+          settings: {
+            ...activeCard.settings,
+            [setting]: toggleCardResp.message[setting]
+          }});
+
         setUserCards(prevCards => prevCards.map(card => {
           if (card.id === activeCard.id) {
 
@@ -313,7 +321,7 @@ const CardManagement: React.FC = () => {
                 <div>
                   <p className="font-medium">Online Payments</p>
                   <p className="text-sm text-gray-500">Allow online and e-commerce transactions</p>
-                  <p><h2>Online Transaction currently is : {activeCard.settings.onlinePayments} </h2></p>
+                  <p><h2>Online Transaction currently is : {activeCard.settings.onlinePayments?'true':'false'} </h2></p>
 
                 </div>
                 <Switch 
