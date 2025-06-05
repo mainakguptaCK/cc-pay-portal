@@ -16,7 +16,7 @@ const CardManagement: React.FC = () => {
   // const activeCard: CardList | undefined = activeCardId
   //   ? userCards.find(card => card.id === activeCardId)
   //   : (userCards.length > 0 ? userCards[0] : undefined);
-  const [activeCard,setActiveCard]= useState<CardList | undefined >(undefined)
+  const [activeCard,setActiveCard]= useState<CardList | undefined | any>(undefined)
 
   const test=(activeCardId:string)=>{
     setActiveCard(userCards.find(card => card.id === activeCardId))
@@ -80,34 +80,34 @@ const CardManagement: React.FC = () => {
       return;
     }
 
-    try {
-      const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/toggleCardSettings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          UserID: userId, 
-          CardNumber: activeCard.cardNumber, 
-          settingName: setting,
-          currentValue :value
-        }),
-      });
+      try {
+        const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/toggleCardSettings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            UserID: userId, 
+            CardNumber: activeCard.cardNumber, 
+            settingName: setting,
+            currentValue :value
+          }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        throw new Error(`Failed to toggle card setting: ${response.status} - ${errorData.message || response.statusText}`);
-      }
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+          throw new Error(`Failed to toggle card setting: ${response.status} - ${errorData.message || response.statusText}`);
+        }
 
-      const toggleCardResp = await response.json();
-      console.log('Toggle card response : ', toggleCardResp);
+        const toggleCardResp = await response.json();
+        console.log('Toggle card response : ', toggleCardResp);
 
-      if (toggleCardResp && toggleCardResp.message && typeof toggleCardResp.message === 'object' && toggleCardResp.message[setting] !== undefined) {
+        if (toggleCardResp && toggleCardResp.message && typeof toggleCardResp.message === 'object' && toggleCardResp.message[setting] !== undefined) {
 
-        setActiveCard({
-          ...activeCard,
-          settings: {
-            ...activeCard.settings,
-            [setting]: toggleCardResp.message[setting]
-          }});
+          setActiveCard({
+            ...activeCard,
+            settings: {
+              ...activeCard.settings,
+              [setting]: toggleCardResp.message[setting]
+            }});
 
         setUserCards(prevCards => prevCards.map(card => {
           if (card.id === activeCard.id) {
@@ -138,8 +138,44 @@ const CardManagement: React.FC = () => {
     }
   };
 
-  const handleBlockCard = () => {
+  const handleBlockCard = async () => {
     // Add block card Api here
+    
+        try {
+          const response = await fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/blockByCustomer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              UserID: userId, 
+              CardNumber: activeCard?.cardNumber,
+              CustomerRequest : activeCard?.isBlocked === true ? 'UNBLOCK' : 'BLOCK'
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+            throw new Error(`Failed to toggle card setting: ${response.status} - ${errorData.message || response.statusText}`);
+          }else{
+            setActiveCard({
+              ...activeCard,
+              isBlocked: !(activeCard?.isBlocked)});
+
+            setUserCards(prevCards => prevCards.map(card => {
+              if (card.id === activeCard.id) {
+                return {
+                  ...card,
+                  isBlocked : !(activeCard?.isBlocked)
+                }
+              }else {
+                return card
+              }
+
+            }));  
+          }
+      }catch(error){
+        console.log(error);
+      }
+    
   };
 
   const formatCardNumber = (cardNumber: string) => {
