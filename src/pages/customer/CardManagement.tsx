@@ -18,6 +18,7 @@ const CardManagement: React.FC = () => {
   //   : (userCards.length > 0 ? userCards[0] : undefined);
   const [activeCard,setActiveCard]= useState<CardList | undefined >(undefined)
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -171,6 +172,10 @@ const CardManagement: React.FC = () => {
                     onClick={() => {
                       console.log('cardId : ',card.id);
                       setActiveCardId(card.id)
+                      setActiveCard(activeCardId
+                          ? userCards.find(card => card.id === activeCardId)
+                          : (userCards.length > 0 ? userCards[0] : undefined))
+                      console.log('show active card============>',JSON.stringify(activeCard,null,2))
                     }}
                   >
                     <div className="flex items-center space-x-3">
