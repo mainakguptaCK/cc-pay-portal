@@ -15,6 +15,7 @@ const AdminDashboard: React.FC = () => {
 
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
+  const isAdmin = currentUser?.role;
   const [totalCreditLimit,settotalCreditLimit] = useState<number>(0);
   const [totalOutstanding,settotalOutstanding] = useState<number>(0);
   const [totalAvailable,settotalAvailable] = useState<number>(0);
@@ -23,24 +24,38 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
       const fetchData = async () => {
         try {
+          console.log('Before Callout');
           const [cardsRes] = await Promise.all([
             fetch('https://cc-pay-app-service-dev-cecxemfggbf0dzas.eastus-01.azurewebsites.net/api/card/getCardAccountSummary', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ UserID: userId }),
+              body: JSON.stringify({ UserID: userId, isAdmin: isAdmin }),
             })
           ]);
   
           const cardsData = await cardsRes.json();
-          console.log('cardsData : ',cardsData);
-          console.log('TotalCreditLimit',cardsData.message.TotalCreditLimit);
-          console.log('TotalOutstanding',cardsData.message.TotalOutstanding);
-          console.log('AvailableCredit',cardsData.message.AvailableCredit);
-          console.log('TotalBlockedCards',cardsData.message.TotalBlockedCards);
-          // settotalCreditLimit(cardsData.message.TotalCreditLimit);
-          // settotalOutstanding(cardsData.message.TotalOutstanding);
-          // settotalAvailable(cardsData.message.AvailableCredit);
-          // setblockedCards(cardsData.message.TotalBlockedCards);
+          console.log('cardsData',cardsData);
+          console.log('cardsData',cardsData[0]);
+
+          if (cardsData && cardsData.message) {
+            console.log('cardsData : ',cardsData);
+            // console.log('TotalCreditLimit',cardsData.message.TotalCreditLimit);
+            // console.log('TotalOutstanding',cardsData.message.TotalOutstanding);
+            // console.log('AvailableCredit',cardsData.message.AvailableCredit);
+            // console.log('TotalBlockedCards',cardsData.message.TotalBlockedCards);
+            settotalCreditLimit(cardsData?.message?.TotalCreditLimit ?? 0);
+            settotalOutstanding(cardsData?.message?.TotalOutstanding ?? 0);
+            settotalAvailable(cardsData?.message?.TotalAvailableCredit ?? 0);
+            setblockedCards(cardsData?.message?.TotalBlockedCards ?? 0); 
+          }else {
+            // This block runs if the API returns a null message.
+            console.warn("API returned no data for this user:", cardsData);
+            // Optionally reset states to 0 to clear any old data
+            settotalCreditLimit(0);
+            settotalOutstanding(0);
+            settotalAvailable(0);
+            setblockedCards(0);
+          }
         }catch(error){
           console.log(error)
         }
