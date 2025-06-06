@@ -187,12 +187,15 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const filteredUsers = allUsers.filter(
-    (user) =>
-      searchQuery === "" ||
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = allUsers.filter((user) => {
+  const name = user.name || "";
+  const email = user.email || "";
+  return (
+    searchQuery === "" ||
+    name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    email.toLowerCase().includes(searchQuery.toLowerCase())
   );
+});
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
