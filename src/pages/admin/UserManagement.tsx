@@ -236,6 +236,24 @@ const UserManagement: React.FC = () => {
 
       // Optionally refresh card data
       setCreditLimits((prev) => ({ ...prev, [cardId]: "" }));
+      setUserCards((prevCards) =>
+        prevCards.map((c) => {
+          // Find the card that was just updated
+          if (c.id === cardId) {
+            const newCreditLimit = parseFloat(newLimit);
+            // Also recalculate the available limit
+            const newAvailableLimit = newCreditLimit - c.totalOutstanding;
+            
+            // Return a new object for the updated card
+            return {
+              ...c,
+              creditLimit: newCreditLimit,
+              availableLimit: newAvailableLimit,
+            };
+          }
+          // Return all other cards unchanged
+          return c;
+        }));
       // Optionally, refetch card details here to reflect new limit
     } catch (error) {
       console.error("Error updating credit limit:", error);
