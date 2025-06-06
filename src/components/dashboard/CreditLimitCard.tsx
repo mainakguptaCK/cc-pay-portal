@@ -52,7 +52,7 @@ const CreditLimitCard: React.FC<CreditLimitCardProps> = ({ card }) => {
             <div>
               <p className="text-sm text-gray-500 mb-1">Total Credit Limit</p>
               <p className="text-lg font-semibold flex items-center">
-                <DollarSign size={18} className="text-gray-400 mr-1" />
+                <p className="text-gray-400 mr-1" />
                 {formatCurrency(creditLimit)}
               </p>
             </div>

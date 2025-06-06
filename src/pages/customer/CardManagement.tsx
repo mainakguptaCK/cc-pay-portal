@@ -259,7 +259,7 @@ const CardManagement: React.FC = () => {
                 >
                   {activeCard.isBlocked ? 'Unblock Card' : 'Block Card'}
                 </Button>
-                <Button
+                {/* <Button
                   variant="secondary"
                   fullWidth
                   leftIcon={<CreditCardIcon size={16} />}
@@ -272,7 +272,7 @@ const CardManagement: React.FC = () => {
                   leftIcon={<AlertCircle size={16} />}
                 >
                   Report Lost or Stolen
-                </Button>
+                </Button> */}
               </div>
             </CardBody>
           </Card>
