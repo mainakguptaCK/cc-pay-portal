@@ -283,9 +283,9 @@ const UserManagement: React.FC = () => {
               <h2 className="text-lg font-semibold text-gray-800">
                 Customer List
               </h2>
-              <Button variant="outline" size="sm">
+              {/* <Button variant="outline" size="sm">
                 Add User
-              </Button>
+              </Button> */}
             </CardHeader>
             <div className="px-6 py-4 border-b border-gray-200">
               <Input
@@ -351,7 +351,7 @@ const UserManagement: React.FC = () => {
                   <h2 className="text-lg font-semibold text-gray-800">
                     User Details
                   </h2>
-                  <div className="flex space-x-2">
+                  {/* <div className="flex space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -411,10 +411,10 @@ const UserManagement: React.FC = () => {
                         ? "Unlock Account"
                         : "Lock Account"}
                     </Button>
-                  </div>
+                  </div> */}
                 </CardHeader>
                 <CardBody>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-2">
                         User Information
@@ -447,7 +447,7 @@ const UserManagement: React.FC = () => {
                       </div>
                     </div>
 
-                    <div>
+                    {/* <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-2">
                         Actions
                       </h3>
@@ -469,7 +469,7 @@ const UserManagement: React.FC = () => {
                           {loading ? "Updating..." : "Update Email Address"}
                         </Button>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </CardBody>
               </Card>
