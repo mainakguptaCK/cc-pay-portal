@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Download, Search } from "lucide-react";
 import Card, { CardBody, CardHeader } from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
+// import Input from "../../components/ui/Input";
 import { useAuth } from "../../context/useAuth";
 
 const Statements: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
+  // const [searchTerm, setSearchTerm] = useState("");
+  // const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
   const [selectedCard, setSelectedCard] = useState<string>("all");
   const [userCards, setUserCards] = useState<any[]>([]);
   const { currentUser } = useAuth();
@@ -108,9 +108,9 @@ const Statements: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Statements</h1>
-        <Button variant="outline" leftIcon={<Download size={16} />}>
+        {/* <Button variant="outline" leftIcon={<Download size={16} />}>
           Download All
-        </Button>
+        </Button> */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -122,13 +122,13 @@ const Statements: React.FC = () => {
                 Statement History
               </h2>
               <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:space-x-2">
-                <Input
+                {/* <Input
                   placeholder="Search statements"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   leftIcon={<Search size={16} className="text-gray-400" />}
-                />
-                <select
+                /> */}
+                {/* <select
                   className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
@@ -136,7 +136,7 @@ const Statements: React.FC = () => {
                   <option value="all">All Periods</option>
                   <option value="2025">2025</option>
                   <option value="2024">2024</option>
-                </select>
+                </select> */}
                 <select
                   className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   value={selectedCard}
@@ -208,11 +208,11 @@ const Statements: React.FC = () => {
                 </div>
               )}
 
-              <div className="mt-6">
+              {/* <div className="mt-6">
                 <Button variant="outline" fullWidth>
                   Manage Statement Preferences
                 </Button>
-              </div>
+              </div> */}
             </CardBody>
           </Card>
         </div>

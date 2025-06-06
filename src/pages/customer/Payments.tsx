@@ -259,7 +259,7 @@ const Payments: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-gray-800">Automatic Payments</h2>
+              <h2 className="text-lg font-semibold text-gray-800">Automatic Payments (coming soon)</h2>
             </CardHeader>
             <CardBody>
               {userDirectDebit ? (

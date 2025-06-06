@@ -103,12 +103,12 @@ const Transactions: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
-        <Button
+        {/* <Button
           variant="outline"
           leftIcon={<Download size={16} />}
         >
           Export Transactions
-        </Button>
+        </Button> */}
       </div>
       
       <Card className="mb-8">
@@ -136,15 +136,6 @@ const Transactions: React.FC = () => {
                   </option>
                 ))}
               </select>
-            </div>
-            <div>
-              <Button
-                variant="outline"
-                leftIcon={<Filter size={16} />}
-                fullWidth
-              >
-                More Filters
-              </Button>
             </div>
           </div>
           
