@@ -38,8 +38,9 @@
       "allowedRoles": ["authenticated"]
     },
     {
-      "route": "/",
-      "rewrite": "/index.html"
+      "route": "/*",
+      "statusCode": 302,
+      "redirect": "https://web-app-endpoint-dcgrgkbzcsdbdqev.z02.azurefd.net/"
     },
     {
       "route": "/login",
