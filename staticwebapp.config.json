@@ -62,5 +62,9 @@
       "route": "/login-admin",
       "redirect": "/.auth/login/aad"
     }
-  ]
+  ],
+  "globalHeaders": {
+    "X-Azure-FDID": "AZURE_FRONTDOOR_ID"
+  }
+
 }
