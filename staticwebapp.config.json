@@ -61,11 +61,6 @@
     {
       "route": "/login-admin",
       "redirect": "/.auth/login/aad"
-    },
-    {
-      "route": "/*",
-      "statusCode": 302,
-      "redirect": "https://web-app-endpoint-dcgrgkbzcsdbdqev.z02.azurefd.net"
     }
   ],
   "globalHeaders": {
